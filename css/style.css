@@ -519,4 +519,179 @@ footer {
     padding: 20px;
     color: #666;
     font-size: 0.9rem;
+}
+
+/* 로그인 상태 표시 영역 */
+.login-status {
+    background-color: #f0f7ff;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 10px 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Gaegu', cursive;
+}
+
+.login-status button {
+    background-color: #4a6cd4;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-family: 'Gaegu', cursive;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-status button:hover {
+    background-color: #3557b7;
+}
+
+.login-status span {
+    font-weight: bold;
+    color: #4a6cd4;
+}
+
+/* 대시보드 스타일 */
+.dashboard-content {
+    max-width: 600px;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-item {
+    background-color: #f5f7ff;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4a6cd4;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #666;
+}
+
+.game-history {
+    margin-top: 20px;
+    background-color: #f5f7ff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-history h3 {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.history-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.history-label {
+    font-weight: bold;
+}
+
+.history-value {
+    color: #4a6cd4;
+}
+
+/* 보물상자 스타일 추가 */
+.treasure-info {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.treasures-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+}
+
+/* 로그인 폼 스타일 */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Gaegu', cursive;
+    font-size: 1rem;
+}
+
+/* 애니메이션 효과 */
+.hit {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.big-reward-icon {
+    font-size: 5rem;
+    margin: 20px 0;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.big-level-icon {
+    font-size: 5rem;
+    margin: 20px 0;
+    animation: rotate 2s infinite;
+    color: gold;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/* 버튼 비활성화 스타일 */
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
 } 
