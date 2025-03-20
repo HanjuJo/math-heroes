@@ -1,37 +1,118 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 그라데이션 및 필터 정의 -->
+  <defs>
+    <radialGradient id="monsterBody" cx="50%" cy="50%" r="70%" fx="45%" fy="40%">
+      <stop offset="0%" stop-color="#FFD6E0" />
+      <stop offset="85%" stop-color="#FFAFCC" />
+      <stop offset="100%" stop-color="#FF85A1" />
+    </radialGradient>
+    <linearGradient id="hornGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFC8DD" />
+      <stop offset="100%" stop-color="#FF85A1" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#00000044" />
+    </filter>
+  </defs>
+  
   <!-- 몬스터 몸체 -->
-  <rect x="40" y="40" width="120" height="120" rx="20" ry="20" fill="#FFAFCC" stroke="#FF85A1" stroke-width="3" />
+  <g>
+    <circle cx="100" cy="100" r="80" fill="url(#monsterBody)" stroke="#FF5E87" stroke-width="3" filter="url(#shadow)" />
+    
+    <!-- 질감 표현 -->
+    <path d="M50 80 Q80 70, 100 90 Q120 110, 150 100" stroke="#FFCAD4" stroke-width="2" fill="none" opacity="0.5" />
+    <path d="M40 120 Q80 100, 120 130 Q140 150, 160 130" stroke="#FFCAD4" stroke-width="2" fill="none" opacity="0.5" />
+  </g>
   
   <!-- 눈 -->
-  <circle cx="80" cy="80" r="15" fill="white" stroke="#333" stroke-width="2" />
-  <circle cx="120" cy="80" r="15" fill="white" stroke="#333" stroke-width="2" />
-  <circle cx="75" cy="80" r="8" fill="#333" />
-  <circle cx="115" cy="80" r="8" fill="#333" />
+  <g>
+    <!-- 왼쪽 눈 -->
+    <ellipse cx="70" cy="80" rx="16" ry="17" fill="white" stroke="#333" stroke-width="2" />
+    <ellipse cx="70" cy="80" rx="8" ry="9" fill="#333">
+      <animate attributeName="cy" from="80" to="82" dur="4s" repeatCount="indefinite" />
+    </ellipse>
+    <circle cx="67" cy="77" r="3" fill="white" />
+    
+    <!-- 오른쪽 눈 -->
+    <ellipse cx="130" cy="80" rx="16" ry="17" fill="white" stroke="#333" stroke-width="2" />
+    <ellipse cx="130" cy="80" rx="8" ry="9" fill="#333">
+      <animate attributeName="cy" from="80" to="82" dur="4s" repeatCount="indefinite" />
+    </ellipse>
+    <circle cx="127" cy="77" r="3" fill="white" />
+    
+    <!-- 눈썹 - 더 부드러운 곡선 -->
+    <path d="M60 62 Q70 58 80 62" stroke="#FF5E87" stroke-width="3" fill="none" />
+    <path d="M120 62 Q130 58 140 62" stroke="#FF5E87" stroke-width="3" fill="none" />
+  </g>
   
-  <!-- 빛나는 효과 -->
-  <circle cx="72" cy="77" r="3" fill="white" />
-  <circle cx="112" cy="77" r="3" fill="white" />
+  <!-- 메가톤 브리지(콧대) -->
+  <path d="M95 80 L105 80 L105 95 L95 95 Z" fill="#FFCAD4" stroke="#FF5E87" stroke-width="1.5" />
   
-  <!-- 입 -->
-  <path d="M80 120 Q100 140 120 120" fill="#FF85A1" stroke="#333" stroke-width="2" />
+  <!-- 입 - 웃는 입 -->
+  <path d="M70 115 Q100 140 130 115" fill="#FF5E87" stroke="#333" stroke-width="3">
+    <animate attributeName="d" 
+             values="M70 115 Q100 140 130 115; M70 120 Q100 150 130 120; M70 115 Q100 140 130 115" 
+             dur="7s" 
+             repeatCount="indefinite" />
+  </path>
   
-  <!-- 수염 같은 뾰족한 것 -->
-  <path d="M50 60 L30 40 L60 50" fill="#FFC8DD" stroke="#FF85A1" stroke-width="2" />
-  <path d="M150 60 L170 40 L140 50" fill="#FFC8DD" stroke="#FF85A1" stroke-width="2" />
-  <path d="M50 100 L20 100 L50 110" fill="#FFC8DD" stroke="#FF85A1" stroke-width="2" />
-  <path d="M150 100 L180 100 L150 110" fill="#FFC8DD" stroke="#FF85A1" stroke-width="2" />
+  <!-- 작은 이빨 - 웃을 때 보이는 -->
+  <g>
+    <rect x="85" y="115" width="5" height="8" rx="1" ry="1" fill="white" stroke="#333" stroke-width="0.5" />
+    <rect x="95" y="118" width="5" height="8" rx="1" ry="1" fill="white" stroke="#333" stroke-width="0.5" />
+    <rect x="105" y="118" width="5" height="8" rx="1" ry="1" fill="white" stroke="#333" stroke-width="0.5" />
+    <rect x="115" y="115" width="5" height="8" rx="1" ry="1" fill="white" stroke="#333" stroke-width="0.5" />
+  </g>
   
-  <!-- 귀여운 무늬 -->
-  <circle cx="100" cy="40" r="10" fill="#FFC8DD" stroke="#FF85A1" stroke-width="1" />
-  <circle cx="65" cy="125" r="8" fill="#FFC8DD" stroke="#FF85A1" stroke-width="1" />
-  <circle cx="135" cy="125" r="8" fill="#FFC8DD" stroke="#FF85A1" stroke-width="1" />
+  <!-- 뿔/귀 - 공룡처럼 생긴 -->
+  <g>
+    <path d="M50 50 Q40 30 55 20 Q65 25 70 40" fill="url(#hornGradient)" stroke="#FF5E87" stroke-width="2" filter="url(#shadow)">
+      <animate attributeName="d" 
+               values="M50 50 Q40 30 55 20 Q65 25 70 40; M50 50 Q38 28 53 18 Q63 23 70 40; M50 50 Q40 30 55 20 Q65 25 70 40" 
+               dur="6s" 
+               repeatCount="indefinite" />
+    </path>
+    <path d="M150 50 Q160 30 145 20 Q135 25 130 40" fill="url(#hornGradient)" stroke="#FF5E87" stroke-width="2" filter="url(#shadow)">
+      <animate attributeName="d" 
+               values="M150 50 Q160 30 145 20 Q135 25 130 40; M150 50 Q162 28 147 18 Q137 23 130 40; M150 50 Q160 30 145 20 Q135 25 130 40" 
+               dur="6s" 
+               repeatCount="indefinite" />
+    </path>
+  </g>
   
-  <!-- 수학 기호 문제 -->
-  <rect x="85" y="60" width="30" height="25" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1" />
-  <text x="91" y="79" font-family="Arial" font-size="16" font-weight="bold" fill="#333">?</text>
+  <!-- 볼 장식 -->
+  <circle cx="60" cy="100" r="10" fill="#FFC8DD" opacity="0.7" />
+  <circle cx="140" cy="100" r="10" fill="#FFC8DD" opacity="0.7" />
   
-  <!-- 촉수 -->
-  <path d="M70 160 Q60 180 80 190" fill="none" stroke="#FF85A1" stroke-width="3" />
-  <path d="M100 160 Q110 190 90 190" fill="none" stroke="#FF85A1" stroke-width="3" />
-  <path d="M130 160 Q140 180 120 190" fill="none" stroke="#FF85A1" stroke-width="3" />
+  <!-- 장식 패턴 -->
+  <circle cx="40" cy="70" r="5" fill="#FFC8DD" opacity="0.5" />
+  <circle cx="160" cy="70" r="5" fill="#FFC8DD" opacity="0.5" />
+  <circle cx="50" cy="140" r="4" fill="#FFC8DD" opacity="0.5" />
+  <circle cx="150" cy="140" r="4" fill="#FFC8DD" opacity="0.5" />
+  
+  <!-- 수학 문제가 있는 생각 말풍선 -->
+  <g>
+    <path d="M100 30 
+             C125 30, 140 45, 140 55 
+             C140 65, 125 75, 100 75 
+             C75 75, 60 65, 60 55 
+             C60 45, 75 30, 100 30" 
+         fill="white" stroke="#333" stroke-width="2" filter="url(#shadow)" />
+    
+    <path d="M110 75 L115 90 L100 75" fill="white" stroke="#333" stroke-width="2" />
+    
+    <!-- 수학 문제 -->
+    <text x="90" y="60" font-family="Arial" font-size="18" font-weight="bold" fill="#333">?</text>
+    <text x="80" y="45" font-family="Arial" font-size="10" font-weight="bold" fill="#E63946">5×4</text>
+  </g>
+  
+  <!-- 특별한 특징 - 귀여운 반점 -->
+  <circle cx="75" cy="120" r="3" fill="#FFC8DD" stroke="#FF5E87" stroke-width="1" />
+  <circle cx="85" cy="125" r="2" fill="#FFC8DD" stroke="#FF5E87" stroke-width="1" />
+  <circle cx="125" cy="120" r="3" fill="#FFC8DD" stroke="#FF5E87" stroke-width="1" />
+  <circle cx="115" cy="125" r="2" fill="#FFC8DD" stroke="#FF5E87" stroke-width="1" />
 </svg> 
