@@ -1,0 +1,522 @@
+/* 전역 스타일 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Gaegu', cursive;
+    background-color: #f5f7ff;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #4a6cd4;
+}
+
+/* 헤더 스타일 */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.title {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: #ff6b6b;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: #74b9ff;
+}
+
+/* 환영 화면 */
+.welcome-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+}
+
+.character-container {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.main-character {
+    max-width: 200px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.welcome-message {
+    flex: 2;
+    min-width: 300px;
+    padding: 20px;
+}
+
+.welcome-message h2 {
+    margin-bottom: 15px;
+    font-size: 2rem;
+}
+
+.welcome-message p {
+    font-size: 1.2rem;
+}
+
+/* 게임 선택 카드 */
+.game-selection {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.game-selection h2 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.game-cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.game-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    width: 220px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.game-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#addition-game .card-icon {
+    color: #ff6b6b;
+}
+
+#subtraction-game .card-icon {
+    color: #55efc4;
+}
+
+#multiplication-game .card-icon {
+    color: #a29bfe;
+}
+
+#clock-game .card-icon {
+    color: #ffeaa7;
+}
+
+.game-card h3 {
+    margin-bottom: 10px;
+}
+
+/* 보물상자 섹션 */
+.treasure-box {
+    text-align: center;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.treasure-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.treasure-icon {
+    font-size: 3rem;
+    animation: glow 2s infinite;
+}
+
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 10px gold; }
+    50% { text-shadow: 0 0 25px gold; }
+}
+
+.treasure-button {
+    background-color: #ffd32a;
+    color: #333;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-family: 'Gaegu', cursive;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.treasure-button:hover {
+    transform: scale(1.05);
+}
+
+/* 게임 컨테이너 */
+#game-container {
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 1000px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 모달 창 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #777;
+}
+
+.reward-title {
+    color: #ff9800;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.reward-image img {
+    max-width: 150px;
+    margin: 20px 0;
+}
+
+.reward-message {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.modal-button {
+    background-color: #4a6cd4;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-family: 'Gaegu', cursive;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-button:hover {
+    background-color: #3a5bc4;
+}
+
+.treasures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.treasure-item {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 유틸리티 클래스 */
+.hidden {
+    display: none !important;
+}
+
+/* 게임 화면 스타일 */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.game-title {
+    font-size: 2rem;
+}
+
+.back-button {
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 15px;
+    font-family: 'Gaegu', cursive;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #d0d0d0;
+}
+
+.game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.monster-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin-bottom: 20px;
+}
+
+.monster-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.health-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.health-bar {
+    height: 100%;
+    width: 100%;
+    background-color: #4caf50;
+    transition: width 0.5s;
+}
+
+.math-problem {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.options-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.option-button {
+    background-color: white;
+    border: 2px solid #4a6cd4;
+    border-radius: 15px;
+    padding: 15px;
+    font-family: 'Gaegu', cursive;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.option-button:hover {
+    transform: scale(1.05);
+    background-color: #f0f5ff;
+}
+
+.hint-button {
+    margin-top: 20px;
+    background-color: #ffd32a;
+    color: #333;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 15px;
+    font-family: 'Gaegu', cursive;
+    cursor: pointer;
+}
+
+.hint-text {
+    margin-top: 15px;
+    color: #666;
+    font-style: italic;
+}
+
+.progress-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.progress-text {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.stars-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.star {
+    font-size: 2rem;
+    color: #e0e0e0;
+}
+
+.star.filled {
+    color: #ffd700;
+}
+
+/* 시계 게임 특별 스타일 */
+.clock-face {
+    width: 200px;
+    height: 200px;
+    border: 5px solid #4a6cd4;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto 20px;
+    background-color: white;
+}
+
+.clock-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background-color: #333;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.hour-hand, .minute-hand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: left center;
+    background-color: #333;
+    border-radius: 5px;
+}
+
+.hour-hand {
+    width: 60px;
+    height: 6px;
+    transform: translate(0, -50%) rotate(0deg);
+}
+
+.minute-hand {
+    width: 80px;
+    height: 4px;
+    transform: translate(0, -50%) rotate(0deg);
+}
+
+.time-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.time-option {
+    background-color: white;
+    border: 2px solid #4a6cd4;
+    border-radius: 15px;
+    padding: 10px;
+    font-family: 'Gaegu', cursive;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.time-option:hover {
+    transform: scale(1.05);
+    background-color: #f0f5ff;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .welcome-screen {
+        flex-direction: column;
+    }
+    
+    .game-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .options-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .time-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 푸터 */
+footer {
+    text-align: center;
+    margin-top: auto;
+    padding: 20px;
+    color: #666;
+    font-size: 0.9rem;
+} 

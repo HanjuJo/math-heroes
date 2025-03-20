@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 몬스터 몸체 -->
+  <rect x="40" y="40" width="120" height="120" rx="20" ry="20" fill="#FFAFCC" stroke="#FF85A1" stroke-width="3" />
+  
+  <!-- 눈 -->
+  <circle cx="80" cy="80" r="15" fill="white" stroke="#333" stroke-width="2" />
+  <circle cx="120" cy="80" r="15" fill="white" stroke="#333" stroke-width="2" />
+  <circle cx="75" cy="80" r="8" fill="#333" />
+  <circle cx="115" cy="80" r="8" fill="#333" />
+  
+  <!-- 빛나는 효과 -->
+  <circle cx="72" cy="77" r="3" fill="white" />
+  <circle cx="112" cy="77" r="3" fill="white" />
+  
+  <!-- 입 -->
+  <path d="M80 120 Q100 140 120 120" fill="#FF85A1" stroke="#333" stroke-width="2" />
+  
+  <!-- 수염 같은 뾰족한 것 -->
+  <path d="M50 60 L30 40 L60 50" fill="#FFC8DD" stroke="#FF85A1" stroke-width="2" />
+  <path d="M150 60 L170 40 L140 50" fill="#FFC8DD" stroke="#FF85A1" stroke-width="2" />
+  <path d="M50 100 L20 100 L50 110" fill="#FFC8DD" stroke="#FF85A1" stroke-width="2" />
+  <path d="M150 100 L180 100 L150 110" fill="#FFC8DD" stroke="#FF85A1" stroke-width="2" />
+  
+  <!-- 귀여운 무늬 -->
+  <circle cx="100" cy="40" r="10" fill="#FFC8DD" stroke="#FF85A1" stroke-width="1" />
+  <circle cx="65" cy="125" r="8" fill="#FFC8DD" stroke="#FF85A1" stroke-width="1" />
+  <circle cx="135" cy="125" r="8" fill="#FFC8DD" stroke="#FF85A1" stroke-width="1" />
+  
+  <!-- 수학 기호 문제 -->
+  <rect x="85" y="60" width="30" height="25" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1" />
+  <text x="91" y="79" font-family="Arial" font-size="16" font-weight="bold" fill="#333">?</text>
+  
+  <!-- 촉수 -->
+  <path d="M70 160 Q60 180 80 190" fill="none" stroke="#FF85A1" stroke-width="3" />
+  <path d="M100 160 Q110 190 90 190" fill="none" stroke="#FF85A1" stroke-width="3" />
+  <path d="M130 160 Q140 180 120 190" fill="none" stroke="#FF85A1" stroke-width="3" />
+</svg> 

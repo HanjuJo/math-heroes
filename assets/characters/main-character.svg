@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250" width="200" height="250">
+  <!-- 캐릭터 몸체 -->
+  <circle cx="100" cy="70" r="50" fill="#FFD7D7" stroke="#FF9999" stroke-width="2" />
+  
+  <!-- 눈 -->
+  <circle cx="80" cy="60" r="8" fill="white" stroke="#333" stroke-width="1" />
+  <circle cx="120" cy="60" r="8" fill="white" stroke="#333" stroke-width="1" />
+  <circle cx="80" cy="58" r="4" fill="#333" />
+  <circle cx="120" cy="58" r="4" fill="#333" />
+  
+  <!-- 빛나는 효과 -->
+  <circle cx="82" cy="56" r="2" fill="white" />
+  <circle cx="122" cy="56" r="2" fill="white" />
+  
+  <!-- 입 -->
+  <path d="M90 80 Q100 90 110 80" stroke="#333" stroke-width="2" fill="none" />
+  
+  <!-- 볼 -->
+  <circle cx="75" cy="70" r="10" fill="#FFAAAA" opacity="0.6" />
+  <circle cx="125" cy="70" r="10" fill="#FFAAAA" opacity="0.6" />
+  
+  <!-- 몸통 -->
+  <rect x="70" y="120" width="60" height="70" rx="20" ry="20" fill="#A1C5FF" stroke="#6698FF" stroke-width="2" />
+  
+  <!-- 팔 -->
+  <rect x="40" y="130" width="30" height="15" rx="7" ry="7" fill="#A1C5FF" stroke="#6698FF" stroke-width="2" transform="rotate(-20, 40, 130)" />
+  <rect x="130" y="130" width="30" height="15" rx="7" ry="7" fill="#A1C5FF" stroke="#6698FF" stroke-width="2" transform="rotate(20, 160, 130)" />
+  
+  <!-- 다리 -->
+  <rect x="80" y="190" width="15" height="40" rx="7" ry="7" fill="#A1C5FF" stroke="#6698FF" stroke-width="2" />
+  <rect x="105" y="190" width="15" height="40" rx="7" ry="7" fill="#A1C5FF" stroke="#6698FF" stroke-width="2" />
+  
+  <!-- 모자/머리 -->
+  <path d="M50 50 Q100 0 150 50" fill="#FFD700" stroke="#FFA500" stroke-width="2" />
+  <polygon points="50,50 70,30 130,30 150,50" fill="#FFD700" stroke="#FFA500" stroke-width="2" />
+  
+  <!-- 수학 기호 -->
+  <text x="90" y="40" font-family="Arial" font-size="20" font-weight="bold" fill="#FF5555">+</text>
+  <text x="110" y="40" font-family="Arial" font-size="20" font-weight="bold" fill="#5555FF">-</text>
+  <text x="95" y="25" font-family="Arial" font-size="20" font-weight="bold" fill="#55AA55">×</text>
+</svg> 
