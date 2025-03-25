@@ -9,11 +9,13 @@ interface Problem {
 }
 
 interface Props {
-  searchParams: { grade?: string };
+  searchParams: {
+    grade?: string;
+  };
 }
 
-export default function MathRunner({ searchParams }: Props) {
-  const [grade, setGrade] = useState(1);
+export default async function MathRunner({ searchParams }: Props) {
+  const grade = parseInt(await Promise.resolve(searchParams?.grade || '1'));
   const [distance, setDistance] = useState(0);
   const [score, setScore] = useState(0);
   const [problem, setProblem] = useState<Problem | null>(null);
@@ -21,11 +23,6 @@ export default function MathRunner({ searchParams }: Props) {
   const [isRunning, setIsRunning] = useState(false);
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-
-  useEffect(() => {
-    const gradeFromParams = parseInt(searchParams?.grade || '1');
-    setGrade(isNaN(gradeFromParams) ? 1 : gradeFromParams);
-  }, []);
 
   const generateProblem = useCallback(() => {
     let num1, num2, operators;
@@ -169,8 +166,9 @@ export default function MathRunner({ searchParams }: Props) {
   }, [isRunning, problem]);
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8">수학달리기</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-4">수학달리기</h1>
+      <p className="mb-4">{grade}학년 난이도로 플레이합니다.</p>
       
       {!isRunning && !gameOver && (
         <div className="text-center">
