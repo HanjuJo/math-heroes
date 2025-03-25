@@ -86,12 +86,9 @@ const games = {
 };
 
 export default async function GamePage({ params, searchParams }: GamePageProps) {
-  const [gameId, gradeStr] = await Promise.all([
-    Promise.resolve(params.gameId),
-    Promise.resolve(searchParams.grade || '1')
-  ]);
+  const gameId = params.gameId;
+  const grade = parseInt(searchParams?.grade as string || '1');
   
-  const grade = parseInt(gradeStr);
   const game = games[gameId as keyof typeof games];
   
   if (!game) {
