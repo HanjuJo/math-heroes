@@ -147,4 +147,13 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
       </div>
     </main>
   );
+}
+
+export function generateStaticParams() {
+  return [
+    { gameId: 'math-warrior' },
+    { gameId: 'math-runner' },
+    { gameId: 'math-market' },
+    { gameId: 'math-puzzle' }
+  ]
 } 

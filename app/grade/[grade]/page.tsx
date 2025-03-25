@@ -198,4 +198,15 @@ export default async function GradePage({ params }: GradePageProps) {
       </section>
     </main>
   );
+}
+
+export function generateStaticParams() {
+  return [
+    { grade: '1' },
+    { grade: '2' },
+    { grade: '3' },
+    { grade: '4' },
+    { grade: '5' },
+    { grade: '6' }
+  ]
 } 
