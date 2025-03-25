@@ -150,10 +150,13 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
 }
 
 export function generateStaticParams() {
-  return [
-    { gameId: 'math-warrior' },
-    { gameId: 'math-runner' },
-    { gameId: 'math-market' },
-    { gameId: 'math-puzzle' }
-  ]
+  const gameIds = ['math-warrior', 'math-runner', 'math-market', 'math-puzzle'];
+  const grades = ['1', '2', '3', '4', '5', '6'];
+  
+  return gameIds.flatMap(gameId => 
+    grades.map(grade => ({
+      gameId,
+      searchParams: { grade }
+    }))
+  );
 } 

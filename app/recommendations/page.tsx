@@ -198,4 +198,18 @@ export default function RecommendationsPage({ searchParams }: RecommendationsPag
       </div>
     </main>
   );
+}
+
+export function generateStaticParams() {
+  const grades = ['1', '2', '3', '4', '5', '6'];
+  const categories = ['textbook', 'digital', 'tools'];
+  
+  return grades.flatMap(grade => 
+    categories.map(category => ({
+      searchParams: {
+        grade,
+        category
+      }
+    }))
+  );
 } 
