@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "id": "health_potion",
+      "name": "체력 포션",
+      "price": 50,
+      "description": "체력을 30 회복합니다",
+      "effect": {
+        "type": "heal",
+        "value": 30
+      },
+      "image": "/images/items/health_potion.png"
+    },
+    {
+      "id": "power_potion",
+      "name": "힘 포션",
+      "price": 75,
+      "description": "공격력을 10 증가시킵니다",
+      "effect": {
+        "type": "attack",
+        "value": 10
+      },
+      "image": "/images/items/power_potion.png"
+    },
+    {
+      "id": "defense_potion",
+      "name": "방어 포션", 
+      "price": 75,
+      "description": "방어력을 10 증가시킵니다",
+      "effect": {
+        "type": "defense",
+        "value": 10
+      },
+      "image": "/images/items/defense_potion.png"
+    },
+    {
+      "id": "experience_potion",
+      "name": "경험치 포션",
+      "price": 100,
+      "description": "경험치를 50 획득합니다",
+      "effect": {
+        "type": "experience",
+        "value": 50
+      },
+      "image": "/images/items/experience_potion.png"
+    }
+  ]
+} 

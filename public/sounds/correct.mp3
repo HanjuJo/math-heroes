@@ -1,0 +1,10 @@
+// 바이너리 파일은 직접 생성할 수 없으므로, 사용자에게 안내 메시지를 전달하겠습니다.
+console.log("사운드 파일은 직접 추가해야 합니다. 필요한 파일 목록:");
+console.log("1. /public/sounds/correct.mp3");
+console.log("2. /public/sounds/incorrect.mp3");
+console.log("3. /public/sounds/click.mp3");
+console.log("4. /public/sounds/coin.mp3");
+console.log("5. /public/sounds/jump.mp3");
+console.log("6. /public/sounds/powerup.mp3");
+
+// 바이너리 파일은 직접 생성할 수 없으므로 파일만 생성합니다. 
