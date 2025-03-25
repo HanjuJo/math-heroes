@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  basePath: '/math-heroes',
   images: {
     unoptimized: true,
   },
@@ -10,8 +8,7 @@ const nextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: true,
-  },
-  trailingSlash: true
+  }
 }
 
 module.exports = nextConfig 
