@@ -1,0 +1,134 @@
+.main {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+  padding: 2rem;
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #4ECDC4 0%, #556270 100%);
+  border-radius: 1rem;
+  color: white;
+  margin-bottom: 3rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.games, .features, .recommendations {
+  margin-bottom: 3rem;
+}
+
+.games h2, .features h2, .recommendations h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2d3748;
+}
+
+.gameGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.gameCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.gameCard:hover {
+  transform: translateY(-5px);
+}
+
+.gameCard h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #2d3748;
+}
+
+.gameCard p {
+  color: #4a5568;
+  margin-bottom: 1.5rem;
+}
+
+.playButton {
+  display: inline-block;
+  background: #4ECDC4;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.playButton:hover {
+  background: #45b8b0;
+}
+
+.gradeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.gradeCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+  color: #2d3748;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.gradeCard:hover {
+  background: #4ECDC4;
+  color: white;
+  transform: translateY(-3px);
+}
+
+.recommendationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.recommendationCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+  color: #2d3748;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.recommendationCard:hover {
+  background: #556270;
+  color: white;
+  transform: translateY(-3px);
+} 

@@ -1,209 +1,218 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
-  background: #f8fafc;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background: linear-gradient(135deg, #1a1c2c 0%, #2a2d3e 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  color: #fff;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  font-size: 2.5em;
+  color: #ffd700;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .money {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #2563eb;
+  font-size: 1.5em;
+  color: #4caf50;
+  margin-bottom: 10px;
 }
 
-.muteButton {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #64748b;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.muteButton:hover {
-  color: #2563eb;
+.description {
+  color: #ccc;
+  font-size: 1.1em;
+  line-height: 1.5;
 }
 
 .message {
-  padding: 1rem;
-  border-radius: 0.5rem;
   text-align: center;
-  margin-bottom: 1rem;
-  font-weight: bold;
-  animation: fadeIn 0.3s ease-in;
+  padding: 15px;
+  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #ffd700;
+  animation: fadeIn 0.3s ease;
 }
 
-.error {
-  background: #fee2e2;
-  color: #dc2626;
+.problem {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 15px;
+  margin: 20px 0;
+  text-align: center;
 }
 
-.success {
-  background: #dcfce7;
-  color: #16a34a;
+.problem h3 {
+  font-size: 1.8em;
+  color: #ffd700;
+  margin-bottom: 20px;
 }
 
-.marketGrid {
+.options {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.optionButton {
+  padding: 15px;
+  font-size: 1.2em;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.optionButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.marketSection, .inventorySection {
+  margin: 30px 0;
+}
+
+.marketSection h3, .inventorySection h3 {
+  font-size: 1.8em;
+  color: #ffd700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.itemGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
 }
 
 .itemCard {
-  background: white;
-  border-radius: 0.5rem;
-  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s;
 }
 
 .itemCard:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
 }
 
-.itemImage {
-  width: 120px;
-  height: 120px;
-  object-fit: contain;
-  margin-bottom: 1rem;
+.itemCard h4 {
+  font-size: 1.4em;
+  color: #ffd700;
+  margin-bottom: 10px;
 }
 
-.itemCard h3 {
-  font-size: 1.25rem;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
+.category {
+  color: #4caf50;
+  font-size: 0.9em;
+  margin-bottom: 10px;
 }
 
-.itemCard p {
-  color: #64748b;
-  margin-bottom: 1rem;
+.description {
+  color: #ccc;
+  margin-bottom: 15px;
+  font-size: 0.9em;
 }
 
-.addButton {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.addButton:hover {
-  background: #1d4ed8;
-}
-
-.cart {
-  background: white;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.cart h2 {
-  font-size: 1.5rem;
-  color: #1e293b;
-  margin-bottom: 1rem;
-}
-
-.cartItems {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.cartItem {
+.price {
+  font-size: 1.2em;
+  color: #fff;
+  margin: 15px 0;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 0.5rem;
+  justify-content: center;
+  gap: 10px;
 }
 
-.cartItemImage {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
+.priceUp {
+  color: #4caf50;
+  animation: bounce 0.5s infinite;
 }
 
-.cartItemInfo {
-  flex: 1;
+.priceDown {
+  color: #f44336;
+  animation: bounce 0.5s infinite;
 }
 
-.cartItemInfo h3 {
-  font-size: 1.125rem;
-  color: #1e293b;
-  margin-bottom: 0.25rem;
+.quantity {
+  color: #4caf50;
+  margin: 10px 0;
 }
 
-.cartItemInfo p {
-  color: #64748b;
-}
-
-.removeButton {
-  background: #ef4444;
-  color: white;
+.buyButton, .sellButton {
+  width: 100%;
+  padding: 12px;
   border: none;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
+  border-radius: 8px;
+  font-size: 1.1em;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
-.removeButton:hover {
-  background: #dc2626;
-}
-
-.cartTotal {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
-}
-
-.cartTotal p {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #1e293b;
-}
-
-.checkoutButton {
-  background: #16a34a;
+.buyButton {
+  background: linear-gradient(45deg, #4caf50, #45a049);
   color: white;
-  border: none;
-  padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.checkoutButton:hover {
-  background: #15803d;
+.buyButton:hover:not(:disabled) {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+}
+
+.buyButton:disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.sellButton {
+  background: linear-gradient(45deg, #f44336, #e53935);
+  color: white;
+}
+
+.sellButton:hover {
+  background: linear-gradient(45deg, #e53935, #d32f2f);
+  transform: translateY(-2px);
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@media (max-width: 768px) {
+  .itemGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .options {
+    grid-template-columns: 1fr;
+  }
+
+  .header h2 {
+    font-size: 2em;
+  }
+
+  .money {
+    font-size: 1.2em;
   }
 } 

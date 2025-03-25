@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import styles from './GradePage.module.css';
 
 interface GradePageProps {
   params: {
@@ -89,7 +90,7 @@ const units = [
 ];
 
 export default async function GradePage({ params }: GradePageProps) {
-  const grade = parseInt(params.grade as string);
+  const grade = parseInt((await Promise.resolve(params)).grade as string);
   
   if (isNaN(grade) || grade < 1 || grade > 6) {
     notFound();

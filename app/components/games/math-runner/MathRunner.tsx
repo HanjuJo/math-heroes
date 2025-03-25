@@ -1,74 +1,101 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { generateProblem } from './utils/problemGenerator';
-import { audioManager } from '@/app/utils/audioManager';
-import { Obstacle, OBSTACLE_TYPES } from './types/Obstacle';
-import { generateObstacle, updateObstacles, checkCollision } from './utils/obstacleManager';
-import { PowerUp, POWERUP_TYPES } from './types/PowerUp';
-import { generatePowerUp, updatePowerUps, checkPowerUpCollision, applyPowerUpEffect } from './utils/powerUpManager';
 import styles from './MathRunner.module.css';
 
 interface MathRunnerProps {
   grade: number;
+  onScoreUpdate?: (score: number) => void;
 }
 
-interface GameState {
-  score: number;
-  speed: number;
-  distance: number;
-  isJumping: boolean;
-  isGameOver: boolean;
-  currentProblem: {
-    question: string;
-    answer: number;
-    options: number[];
-  } | null;
-  obstacles: Obstacle[];
-  powerUps: PowerUp[];
-  activePowerUps: PowerUp[];
-  characterY: number;
-  isShielded: boolean;
-  scoreMultiplier: number;
+interface Problem {
+  question: string;
+  answer: number;
+  options: number[];
 }
 
-const CHARACTER_WIDTH = 80;
-const CHARACTER_HEIGHT = 80;
-const GROUND_Y = 20;
-const JUMP_HEIGHT = 200;
-const JUMP_DURATION = 500;
-
-export default function MathRunner({ grade }: MathRunnerProps) {
-  const [gameState, setGameState] = useState<GameState>({
-    score: 0,
-    speed: 5,
-    distance: 0,
-    isJumping: false,
-    isGameOver: false,
-    currentProblem: null,
-    obstacles: [],
-    powerUps: [],
-    activePowerUps: [],
-    characterY: GROUND_Y,
-    isShielded: false,
-    scoreMultiplier: 1
-  });
+export default function MathRunner({ grade, onScoreUpdate }: MathRunnerProps) {
+  const [score, setScore] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [currentProblem, setCurrentProblem] = useState<Problem | null>(null);
+  const [position, setPosition] = useState(0);
+  const [isJumping, setIsJumping] = useState(false);
+  const [obstacles, setObstacles] = useState<number[]>([]);
+  const [speed, setSpeed] = useState(5);
+  const [lives, setLives] = useState(3);
+  const [combo, setCombo] = useState(0);
 
   const gameLoopRef = useRef<number>();
-  const lastTimeRef = useRef<number>(0);
   const characterRef = useRef<HTMLDivElement>(null);
+  const lastUpdateRef = useRef<number>(0);
 
-  // 게임 초기화
+  const generateProblem = () => {
+    let num1: number, num2: number, answer: number;
+    const operators = grade <= 2 ? ['+', '-'] : ['+', '-', '*', '/'];
+    const operator = operators[Math.floor(Math.random() * operators.length)];
+
+    switch(grade) {
+      case 1:
+        num1 = Math.floor(Math.random() * 10) + 1;
+        num2 = Math.floor(Math.random() * 10) + 1;
+        break;
+      case 2:
+        num1 = Math.floor(Math.random() * 20) + 1;
+        num2 = Math.floor(Math.random() * 20) + 1;
+        break;
+      default:
+        num1 = Math.floor(Math.random() * 50) + 1;
+        num2 = Math.floor(Math.random() * 50) + 1;
+    }
+
+    switch(operator) {
+      case '+': answer = num1 + num2; break;
+      case '-': answer = num1 - num2; break;
+      case '*': answer = num1 * num2; break;
+      case '/':
+        answer = num1;
+        num1 = answer * num2;
+        answer = num1 / num2;
+        break;
+      default: answer = num1 + num2;
+    }
+
+    const options = [answer];
+    while (options.length < 4) {
+      const wrongAnswer = answer + (Math.floor(Math.random() * 10) - 5);
+      if (!options.includes(wrongAnswer) && wrongAnswer > 0) {
+        options.push(wrongAnswer);
+      }
+    }
+
+    return {
+      question: `${num1} ${operator} ${num2} = ?`,
+      answer,
+      options: options.sort(() => Math.random() - 0.5)
+    };
+  };
+
+  const startGame = () => {
+    setScore(0);
+    setLives(3);
+    setCombo(0);
+    setSpeed(5);
+    setPosition(0);
+    setObstacles([]);
+    setIsRunning(true);
+    setIsGameOver(false);
+    setCurrentProblem(generateProblem());
+  };
+
+  const handleJump = () => {
+    if (!isJumping && isRunning) {
+      setIsJumping(true);
+      setTimeout(() => setIsJumping(false), 500);
+    }
+  };
+
   useEffect(() => {
-    setGameState(prev => ({
-      ...prev,
-      currentProblem: generateProblem(grade),
-      obstacles: [generateObstacle(0)],
-      powerUps: [generatePowerUp(0)],
-      activePowerUps: []
-    }));
-
-    // 키보드 이벤트 리스너 추가
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
         handleJump();
@@ -76,252 +103,164 @@ export default function MathRunner({ grade }: MathRunnerProps) {
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [grade]);
+  }, [isJumping, isRunning]);
 
-  // 게임 루프
-  useEffect(() => {
-    if (gameState.isGameOver) return;
-
-    const gameLoop = (timestamp: number) => {
-      if (!lastTimeRef.current) lastTimeRef.current = timestamp;
-      const deltaTime = timestamp - lastTimeRef.current;
-      lastTimeRef.current = timestamp;
-
-      setGameState(prev => {
-        // 장애물 업데이트
-        const updatedObstacles = updateObstacles(prev.obstacles, prev.distance, prev.speed);
+  const gameLoop = (timestamp: number) => {
+    if (!lastUpdateRef.current) lastUpdateRef.current = timestamp;
+    const deltaTime = timestamp - lastUpdateRef.current;
+    
+    if (deltaTime >= 16) { // 약 60fps
+      setPosition(prev => prev + speed);
+      setObstacles(prev => {
+        const newObstacles = prev
+          .map(x => x - speed)
+          .filter(x => x > -50);
         
-        // 파워업 업데이트
-        const updatedPowerUps = updatePowerUps(prev.powerUps, prev.distance, prev.speed);
-        
-        // 활성 파워업 시간 체크 및 효과 제거
-        const currentTime = Date.now();
-        const updatedActivePowerUps = prev.activePowerUps.filter(powerUp => {
-          const isActive = currentTime - powerUp.startTime < powerUp.duration;
-          if (!isActive) {
-            // 파워업 효과 제거
-            switch (powerUp.type) {
-              case 'shield':
-                prev.isShielded = false;
-                break;
-              case 'speed':
-                prev.speed = prev.speed / 1.5;
-                break;
-              case 'score':
-                prev.scoreMultiplier = 1;
-                break;
-            }
-          }
-          return isActive;
-        });
-
-        // 파워업 충돌 체크
-        updatedPowerUps.forEach(powerUp => {
-          if (checkPowerUpCollision(200, prev.characterY, CHARACTER_WIDTH, CHARACTER_HEIGHT, powerUp)) {
-            audioManager?.playSound('powerup');
-            powerUp.active = true;
-            powerUp.startTime = Date.now();
-            updatedActivePowerUps.push(powerUp);
-            const updatedState = applyPowerUpEffect(powerUp.type, prev);
-            Object.assign(prev, updatedState);
-          }
-        });
-
-        // 장애물 충돌 체크 (무적 상태가 아닐 때만)
-        const collision = !prev.isShielded && updatedObstacles.some(obstacle =>
-          checkCollision(200, prev.characterY, CHARACTER_WIDTH, CHARACTER_HEIGHT, obstacle)
-        );
-
-        if (collision) {
-          audioManager?.playSound('incorrect');
-          return { ...prev, isGameOver: true };
+        if (Math.random() < 0.02) {
+          newObstacles.push(800);
         }
-
-        return {
-          ...prev,
-          distance: prev.distance + (prev.speed * deltaTime) / 1000,
-          obstacles: updatedObstacles,
-          powerUps: updatedPowerUps.filter(p => !p.active),
-          activePowerUps: updatedActivePowerUps
-        };
+        return newObstacles;
       });
 
+      const characterElement = characterRef.current;
+      if (characterElement) {
+        const characterRect = characterElement.getBoundingClientRect();
+        obstacles.forEach(obstacleX => {
+          const obstacleRect = {
+            left: obstacleX,
+            right: obstacleX + 30,
+            top: 300,
+            bottom: 350
+          };
+
+          if (!isJumping &&
+              characterRect.right > obstacleRect.left &&
+              characterRect.left < obstacleRect.right &&
+              characterRect.bottom > obstacleRect.top) {
+            handleCollision();
+          }
+        });
+      }
+      
+      lastUpdateRef.current = timestamp;
+    }
+
+    if (isRunning && !isGameOver) {
       gameLoopRef.current = requestAnimationFrame(gameLoop);
-    };
+    }
+  };
 
-    gameLoopRef.current = requestAnimationFrame(gameLoop);
-
+  useEffect(() => {
+    if (isRunning && !isGameOver) {
+      gameLoopRef.current = requestAnimationFrame(gameLoop);
+    }
     return () => {
       if (gameLoopRef.current) {
         cancelAnimationFrame(gameLoopRef.current);
       }
     };
-  }, [gameState.isGameOver]);
+  }, [isRunning, isGameOver]);
 
-  // 점프 처리
-  const handleJump = () => {
-    if (gameState.isJumping) return;
-
-    audioManager?.playSound('jump');
-    setGameState(prev => ({ ...prev, isJumping: true }));
-
-    // 점프 애니메이션
-    const jumpStart = performance.now();
-    const jumpLoop = (timestamp: number) => {
-      const elapsed = timestamp - jumpStart;
-      const progress = Math.min(elapsed / JUMP_DURATION, 1);
-      
-      // 사인 곡선을 사용한 부드러운 점프 모션
-      const height = Math.sin(progress * Math.PI) * JUMP_HEIGHT;
-      
-      setGameState(prev => ({
-        ...prev,
-        characterY: GROUND_Y + height
-      }));
-
-      if (progress < 1) {
-        requestAnimationFrame(jumpLoop);
-      } else {
-        setGameState(prev => ({ ...prev, isJumping: false, characterY: GROUND_Y }));
+  const handleCollision = () => {
+    setLives(prev => {
+      const newLives = prev - 1;
+      if (newLives <= 0) {
+        setIsGameOver(true);
+        if (onScoreUpdate) {
+          onScoreUpdate(score);
+        }
       }
-    };
-
-    requestAnimationFrame(jumpLoop);
-  };
-
-  // 답안 제출 처리
-  const handleAnswer = (answer: number) => {
-    if (!gameState.currentProblem) return;
-
-    if (answer === gameState.currentProblem.answer) {
-      // 정답 처리
-      audioManager?.playSound('correct');
-      audioManager?.playSound('coin');
-      setGameState(prev => ({
-        ...prev,
-        score: prev.score + Math.ceil(prev.speed * prev.scoreMultiplier),
-        speed: prev.speed + 2,
-        currentProblem: generateProblem(grade)
-      }));
-    } else {
-      // 오답 처리
-      audioManager?.playSound('incorrect');
-      setGameState(prev => ({
-        ...prev,
-        speed: Math.max(5, prev.speed - 2),
-        currentProblem: generateProblem(grade)
-      }));
-    }
-  };
-
-  // 게임 재시작
-  const handleRestart = () => {
-    audioManager?.playSound('click');
-    setGameState({
-      score: 0,
-      speed: 5,
-      distance: 0,
-      isJumping: false,
-      isGameOver: false,
-      currentProblem: generateProblem(grade),
-      obstacles: [generateObstacle(0)],
-      powerUps: [generatePowerUp(0)],
-      activePowerUps: [],
-      characterY: GROUND_Y,
-      isShielded: false,
-      scoreMultiplier: 1
+      return newLives;
     });
-    lastTimeRef.current = 0;
+  };
+
+  const handleAnswer = (selectedAnswer: number) => {
+    if (!currentProblem || !isRunning) return;
+
+    if (selectedAnswer === currentProblem.answer) {
+      const newCombo = combo + 1;
+      const comboBonus = Math.floor(newCombo / 3) * 5;
+      setScore(prev => prev + 10 + comboBonus);
+      setCombo(newCombo);
+      setSpeed(prev => Math.min(prev + 0.2, 10));
+      
+      if (newCombo % 3 === 0) {
+        alert(`대단해요! ${newCombo}콤보 달성! 보너스 점수 ${comboBonus}점!`);
+      }
+    } else {
+      setCombo(0);
+      setSpeed(prev => Math.max(prev - 0.5, 5));
+      handleCollision();
+    }
+    
+    setCurrentProblem(generateProblem());
   };
 
   return (
-    <div className={styles.gameContainer}>
-      <div className={styles.background} />
-      
-      {/* 장애물 렌더링 */}
-      {gameState.obstacles.map(obstacle => (
-        <div
-          key={obstacle.id}
-          className={styles.obstacle}
-          style={{
-            left: `${obstacle.x}px`,
-            bottom: `${obstacle.y}px`,
-            width: `${obstacle.width}px`,
-            height: `${obstacle.height}px`,
-            backgroundImage: `url(${OBSTACLE_TYPES[obstacle.type].image})`
-          }}
-        />
-      ))}
-
-      {/* 파워업 렌더링 */}
-      {gameState.powerUps.map(powerUp => (
-        <div
-          key={powerUp.id}
-          className={styles.powerUp}
-          style={{
-            left: `${powerUp.x}px`,
-            bottom: `${powerUp.y}px`,
-            width: `${powerUp.width}px`,
-            height: `${powerUp.height}px`,
-            backgroundImage: `url(${POWERUP_TYPES[powerUp.type].image})`
-          }}
-        />
-      ))}
-
-      <div 
-        ref={characterRef}
-        className={`${styles.character} ${gameState.isJumping ? styles.jumping : ''}`}
-        style={{ bottom: `${gameState.characterY}px` }}
-      >
-        <img src="/images/characters/runner.png" alt="Runner" />
-      </div>
-
-      <div className={styles.stats}>
-        <div>점수: {Math.floor(gameState.score)}</div>
-        <div>속도: {gameState.speed.toFixed(1)}</div>
-        <div>거리: {Math.floor(gameState.distance)}m</div>
-      </div>
-
-      {gameState.currentProblem && (
-        <div className={styles.gameInterface}>
-          <div className={styles.problem}>
-            <div className="text-2xl font-bold mb-4">{gameState.currentProblem.question}</div>
-            <div className={styles.options}>
-              {gameState.currentProblem.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleAnswer(option)}
-                  className={styles.option}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+    <div className={styles.container}>
+      {!isRunning && !isGameOver ? (
+        <div className={styles.startScreen}>
+          <h2>수학 달리기</h2>
+          <p>
+            스페이스바로 점프하고 장애물을 피하세요!<br />
+            문제를 맞추면 점수를 얻고 속도가 올라갑니다.<br />
+            연속으로 맞추면 콤보 보너스!
+          </p>
+          <button onClick={startGame} className={styles.startButton}>
+            게임 시작
+          </button>
+        </div>
+      ) : (
+        <div className={styles.gameScreen}>
+          <div className={styles.stats}>
+            <div>점수: {score}</div>
+            <div>생명: {'❤️'.repeat(lives)}</div>
+            <div>콤보: {combo}</div>
+            <div>속도: {Math.round(speed * 10)}km/h</div>
           </div>
+
+          <div className={styles.gameArea}>
+            <div
+              ref={characterRef}
+              className={`${styles.character} ${isJumping ? styles.jumping : ''}`}
+              style={{ transform: `translateX(${position}px)` }}
+            />
+            
+            {obstacles.map((x, i) => (
+              <div
+                key={i}
+                className={styles.obstacle}
+                style={{ left: `${x}px` }}
+              />
+            ))}
+          </div>
+
+          {currentProblem && (
+            <div className={styles.problem}>
+              <h3>{currentProblem.question}</h3>
+              <div className={styles.options}>
+                {currentProblem.options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswer(option)}
+                    className={styles.optionButton}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* 활성 파워업 표시 */}
-      <div className={styles.activePowerUps}>
-        {gameState.activePowerUps.map(powerUp => (
-          <div key={powerUp.id} className={styles.activePowerUp}>
-            {POWERUP_TYPES[powerUp.type].effect}
-          </div>
-        ))}
-      </div>
-
-      {gameState.isGameOver && (
-        <div className={styles.gameOver}>
-          <div className={styles.gameOverContent}>
-            <h2 className="text-2xl font-bold mb-4">게임 오버!</h2>
-            <p className="mb-4">최종 점수: {Math.floor(gameState.score)}</p>
-            <button
-              onClick={handleRestart}
-              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              다시 시작
-            </button>
-          </div>
+      {isGameOver && (
+        <div className={styles.gameOverScreen}>
+          <h2>게임 오버!</h2>
+          <p>최종 점수: {score}</p>
+          <button onClick={startGame} className={styles.startButton}>
+            다시 시작
+          </button>
         </div>
       )}
     </div>

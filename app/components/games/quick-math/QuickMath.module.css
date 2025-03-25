@@ -1,0 +1,185 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #2c5282 0%, #2b6cb0 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  color: white;
+  min-height: 600px;
+}
+
+.startScreen, .gameOverScreen {
+  text-align: center;
+  padding: 40px;
+}
+
+.startScreen h2, .gameOverScreen h2 {
+  font-size: 2.5em;
+  color: #4fd1c5;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.startScreen p {
+  font-size: 1.2em;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #e2e8f0;
+}
+
+.highScore {
+  font-size: 1.5em;
+  color: #f6e05e;
+  margin: 20px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.startButton {
+  padding: 15px 30px;
+  font-size: 1.2em;
+  background: linear-gradient(45deg, #4fd1c5 0%, #38b2ac 100%);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.startButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.gameScreen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  font-size: 1.2em;
+}
+
+.stats div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.problem {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.timer {
+  font-size: 1.2em;
+  color: #f6e05e;
+  margin-bottom: 15px;
+  animation: pulse 1s infinite;
+}
+
+.problem h3 {
+  font-size: 2em;
+  color: #4fd1c5;
+  margin: 20px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 10px;
+}
+
+.optionButton {
+  padding: 20px;
+  font-size: 1.5em;
+  background: linear-gradient(45deg, #4299e1 0%, #3182ce 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.optionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(45deg, #4fd1c5 0%, #38b2ac 100%);
+}
+
+.results {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.results p {
+  font-size: 1.3em;
+  margin: 10px 0;
+  color: #e2e8f0;
+}
+
+.newRecord {
+  color: #f6e05e !important;
+  font-size: 1.5em !important;
+  font-weight: bold;
+  animation: bounce 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  .buttonGrid {
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .startScreen h2 {
+    font-size: 2em;
+  }
+
+  .startScreen p {
+    font-size: 1em;
+  }
+} 

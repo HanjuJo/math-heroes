@@ -11,13 +11,13 @@
 
 .character {
   width: 60px;
-  height: 80px;
+  height: 60px;
+  background-color: #4fd1c5;
   position: absolute;
-  bottom: 20%;
-  left: 20%;
-  background-image: url('/images/characters/runner.png');
-  background-size: contain;
-  background-repeat: no-repeat;
+  bottom: 50px;
+  left: 50px;
+  border-radius: 50%;
+  transition: transform 0.2s;
 }
 
 .jumping {
@@ -130,4 +130,141 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #1a365d 0%, #2a4365 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  color: white;
+  min-height: 600px;
+  position: relative;
+}
+
+.startScreen, .gameOverScreen {
+  text-align: center;
+  padding: 40px;
+}
+
+.startScreen h2, .gameOverScreen h2 {
+  font-size: 2.5em;
+  color: #48bb78;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.startScreen p {
+  font-size: 1.2em;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #a0aec0;
+}
+
+.startButton {
+  padding: 15px 30px;
+  font-size: 1.2em;
+  background: linear-gradient(45deg, #48bb78 0%, #38a169 100%);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.startButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.gameScreen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  font-size: 1.2em;
+}
+
+.gameArea {
+  height: 400px;
+  background: linear-gradient(to bottom, #2d3748 0%, #1a202c 100%);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.obstacle {
+  width: 30px;
+  height: 50px;
+  background: #fc8181;
+  position: absolute;
+  bottom: 50px;
+  border-radius: 5px;
+}
+
+.problem {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.problem h3 {
+  font-size: 1.8em;
+  color: #48bb78;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 10px;
+}
+
+.optionButton {
+  padding: 15px;
+  font-size: 1.2em;
+  background: linear-gradient(45deg, #4299e1 0%, #3182ce 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.optionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(45deg, #48bb78 0%, #38a169 100%);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.gameOverScreen p {
+  font-size: 1.5em;
+  color: #fc8181;
+  margin: 20px 0;
+  animation: pulse 2s infinite;
 } 
