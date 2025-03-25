@@ -56,10 +56,17 @@ export function checkPowerUpCollision(
   );
 }
 
+interface GameState {
+  isShielded: boolean;
+  speed: number;
+  scoreMultiplier: number;
+  [key: string]: any;
+}
+
 export function applyPowerUpEffect(
   powerUpType: PowerUp['type'],
-  gameState: any
-): any {
+  gameState: GameState
+): GameState {
   switch (powerUpType) {
     case 'shield':
       return {
