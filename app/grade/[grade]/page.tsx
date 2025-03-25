@@ -208,5 +208,5 @@ export function generateStaticParams() {
     { grade: '4' },
     { grade: '5' },
     { grade: '6' }
-  ]
+  ];
 } 
