@@ -11,7 +11,8 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  trailingSlash: true
+  trailingSlash: true,
+  distDir: 'out'
 }
 
 module.exports = nextConfig 

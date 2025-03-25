@@ -1,5 +1,14 @@
-import { redirect } from 'next/navigation';
+export const dynamic = 'force-static';
+
+export async function generateStaticParams() {
+  return [];
+}
 
 export default function RecommendationsPage() {
-  redirect('/recommendations/1/textbook');
+  return (
+    <>
+      <meta httpEquiv="refresh" content="0;url=/recommendations/1/textbook" />
+      <link rel="canonical" href="/recommendations/1/textbook" />
+    </>
+  );
 } 
