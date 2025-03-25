@@ -1,8 +1,18 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 수학 용사 키우기 (Math Heroes)
 
-## Getting Started
+초등학교 수학 학습을 게임으로 재미있게 배우는 웹 애플리케이션입니다.
 
-First, run the development server:
+## 주요 기능
+
+- 수학 용사: 수학 문제를 풀어 캐릭터를 성장시키는 RPG 게임
+- 수학 러너: 달리면서 수학 문제를 푸는 러닝 게임
+- 수학 마켓: 수학 문제를 풀어 아이템을 구매하는 상점 게임
+- 학년별 맞춤 문제: 1~6학년 수준별 문제 제공
+- 추천 학습 자료: 교과서, 문제집, 학습 도구 추천
+
+## 시작하기
+
+개발 서버 실행:
 
 ```bash
 npm run dev
@@ -10,27 +20,16 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000)에서 실행된 애플리케이션을 확인할 수 있습니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 기술 스택
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js](https://nextjs.org) - React 프레임워크
+- [TailwindCSS](https://tailwindcss.com) - CSS 프레임워크
+- [Firebase](https://firebase.google.com) - 백엔드 서비스
 
-## Learn More
+## 배포
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Vercel Platform](https://vercel.com)을 통해 배포됩니다.
