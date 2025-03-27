@@ -255,20 +255,14 @@ function openGameModal(title, gameType) {
     // 게임 타입에 따라 다른 게임 콘텐츠 로드
     switch(gameType) {
         case 'number-run':
-            gameContainer.innerHTML = `
-                <div class="game-description">
-                    <p>숫자 달리기 게임은 주어진 덧셈과 뺄셈 문제를 빠르게 풀면서 장애물을 피해 달리는 게임입니다.</p>
-                    <p>준비 중인 게임입니다. 곧 만나볼 수 있습니다!</p>
-                    <img src="https://via.placeholder.com/600x400?text=숫자왕+달리기" alt="숫자왕 달리기 게임 이미지">
-                </div>
-            `;
+            initializeNumberRunGame(gameContainer);
             break;
         case 'math-warrior':
             gameContainer.innerHTML = `
                 <div class="game-description">
                     <p>수학 용사 게임은 곱셈과 나눗셈 문제를 풀어 몬스터를 물리치는 RPG 게임입니다.</p>
                     <p>준비 중인 게임입니다. 곧 만나볼 수 있습니다!</p>
-                    <img src="https://via.placeholder.com/600x400?text=수학+용사" alt="수학 용사 게임 이미지">
+                    <img src="https://via.placeholder.com/600x400?text=수학+용사" alt="수학 용사 게임 이미지" class="img-fluid rounded">
                 </div>
             `;
             break;
@@ -277,7 +271,7 @@ function openGameModal(title, gameType) {
                 <div class="game-description">
                     <p>도형 퍼즐 게임은 다양한 도형을 배치하여 패턴을 완성하는 퍼즐 게임입니다.</p>
                     <p>준비 중인 게임입니다. 곧 만나볼 수 있습니다!</p>
-                    <img src="https://via.placeholder.com/600x400?text=도형+퍼즐" alt="도형 퍼즐 게임 이미지">
+                    <img src="https://via.placeholder.com/600x400?text=도형+퍼즐" alt="도형 퍼즐 게임 이미지" class="img-fluid rounded">
                 </div>
             `;
             break;
@@ -286,20 +280,31 @@ function openGameModal(title, gameType) {
                 <div class="game-description">
                     <p>수학 시장 게임은 물건 가격을 계산하고 거스름돈을 계산하는 실생활 수학 게임입니다.</p>
                     <p>준비 중인 게임입니다. 곧 만나볼 수 있습니다!</p>
-                    <img src="https://via.placeholder.com/600x400?text=수학+시장" alt="수학 시장 게임 이미지">
+                    <img src="https://via.placeholder.com/600x400?text=수학+시장" alt="수학 시장 게임 이미지" class="img-fluid rounded">
                 </div>
             `;
             break;
         default:
+            if (gameType.startsWith('game-')) {
+                // API에서 가져온 게임 상세 정보 로드 (기존 코드)
+                const gameId = gameType.replace('game-', '');
+                loadGameDetail(gameId);
+                return;
+            }
             gameContainer.innerHTML = '<p>게임 정보를 불러올 수 없습니다.</p>';
     }
     
-    document.getElementById('game-modal').style.display = 'block';
+    // 부트스트랩 모달 사용을 위해 코드 변경
+    const modal = new bootstrap.Modal(document.getElementById('game-modal'));
+    modal.show();
 }
 
 // 게임 모달 닫기
 function closeGameModal() {
-    document.getElementById('game-modal').style.display = 'none';
+    const modal = bootstrap.Modal.getInstance(document.getElementById('game-modal'));
+    if (modal) {
+        modal.hide();
+    }
 }
 
 // 학습 진도 데이터 로드
@@ -453,6 +458,318 @@ function loadGameDetail(gameId) {
                 </div>
             `;
         });
+}
+
+// 숫자왕 달리기 게임 초기화
+function initializeNumberRunGame(container) {
+    // 게임 상태 변수
+    let score = 0;
+    let lives = 3;
+    let gameActive = true;
+    let gameSpeed = 2000; // 문제 출제 시간 간격 (ms)
+    let timerInterval;
+    let currentQuestion = null;
+    let timeLeft = 10;
+    
+    // 게임 UI 구성
+    container.innerHTML = `
+        <div class="number-run-game">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="bi bi-trophy-fill text-warning fs-2"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0">점수</p>
+                            <h3 id="game-score" class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="d-flex align-items-center justify-content-md-end">
+                        <div class="me-3">
+                            <p class="mb-0">생명</p>
+                            <h3 id="game-lives" class="mb-0">❤️❤️❤️</h3>
+                        </div>
+                        <div>
+                            <i class="bi bi-heart-fill text-danger fs-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-board p-4 bg-light rounded shadow-sm mb-4">
+                <div class="progress mb-3">
+                    <div id="game-timer" class="progress-bar bg-warning" role="progressbar" style="width: 100%"></div>
+                </div>
+                
+                <div id="game-question" class="text-center mb-4">
+                    <h2 class="display-4 fw-bold">준비하세요!</h2>
+                    <p>3초 후에 게임이 시작됩니다.</p>
+                </div>
+                
+                <div id="game-options" class="row g-3 mb-3">
+                    <div class="col-6">
+                        <button class="btn btn-primary btn-lg w-100 option-btn" disabled>-</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-primary btn-lg w-100 option-btn" disabled>-</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-primary btn-lg w-100 option-btn" disabled>-</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-primary btn-lg w-100 option-btn" disabled>-</button>
+                    </div>
+                </div>
+                
+                <div id="game-message" class="text-center p-3 rounded"></div>
+            </div>
+            
+            <div class="text-center">
+                <button id="start-game-btn" class="btn btn-success btn-lg">게임 시작하기</button>
+                <button id="restart-game-btn" class="btn btn-warning btn-lg d-none">다시 시작하기</button>
+            </div>
+        </div>
+    `;
+    
+    // DOM 요소 참조
+    const scoreElement = container.querySelector('#game-score');
+    const livesElement = container.querySelector('#game-lives');
+    const questionElement = container.querySelector('#game-question');
+    const optionsContainer = container.querySelector('#game-options');
+    const optionButtons = container.querySelectorAll('.option-btn');
+    const messageElement = container.querySelector('#game-message');
+    const startButton = container.querySelector('#start-game-btn');
+    const restartButton = container.querySelector('#restart-game-btn');
+    const timerElement = container.querySelector('#game-timer');
+    
+    // 게임 시작 버튼 클릭 이벤트
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', startGame);
+    
+    // 게임 시작 함수
+    function startGame() {
+        // 게임 상태 초기화
+        score = 0;
+        lives = 3;
+        gameActive = true;
+        gameSpeed = 2000;
+        scoreElement.textContent = score;
+        livesElement.textContent = '❤️❤️❤️';
+        
+        // UI 초기화
+        startButton.classList.add('d-none');
+        restartButton.classList.add('d-none');
+        messageElement.className = 'text-center p-3 rounded';
+        messageElement.textContent = '';
+        
+        // 카운트다운 시작
+        questionElement.innerHTML = '<h2 class="display-4 fw-bold">3</h2>';
+        
+        setTimeout(() => {
+            questionElement.innerHTML = '<h2 class="display-4 fw-bold">2</h2>';
+            setTimeout(() => {
+                questionElement.innerHTML = '<h2 class="display-4 fw-bold">1</h2>';
+                setTimeout(() => {
+                    // 첫 번째 문제 출제
+                    generateQuestion();
+                    
+                    // 문제 타이머 시작
+                    startTimer();
+                }, 1000);
+            }, 1000);
+        }, 1000);
+    }
+    
+    // 문제 생성 함수
+    function generateQuestion() {
+        if (!gameActive) return;
+        
+        // 기존 타이머 정지
+        clearInterval(timerInterval);
+        timeLeft = 10;
+        
+        // 수학 문제 생성 (덧셈, 1~20 사이의 숫자)
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        const correctAnswer = num1 + num2;
+        
+        // 오답 생성 (정답 ±5 이내, 중복 없이)
+        let options = [correctAnswer];
+        while (options.length < 4) {
+            const offset = Math.floor(Math.random() * 10) - 5;
+            const wrongAnswer = correctAnswer + offset;
+            
+            // 1 이상의 숫자만 사용하고 중복 방지
+            if (wrongAnswer >= 1 && !options.includes(wrongAnswer) && wrongAnswer !== correctAnswer) {
+                options.push(wrongAnswer);
+            }
+        }
+        
+        // 옵션 섞기
+        options = shuffleArray(options);
+        
+        // 현재 문제 기록
+        currentQuestion = {
+            question: `${num1} + ${num2} = ?`,
+            answer: correctAnswer,
+            options: options
+        };
+        
+        // 화면 업데이트
+        questionElement.innerHTML = `<h2 class="display-4 fw-bold">${currentQuestion.question}</h2>`;
+        
+        optionButtons.forEach((btn, index) => {
+            btn.textContent = options[index];
+            btn.disabled = false;
+            btn.className = 'btn btn-primary btn-lg w-100 option-btn';
+            
+            // 이벤트 리스너 초기화
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        
+        // 새로운 이벤트 리스너 등록
+        optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', checkAnswer);
+        });
+        
+        // 타이머 시작
+        startTimer();
+    }
+    
+    // 정답 확인 함수
+    function checkAnswer(event) {
+        // 타이머 정지
+        clearInterval(timerInterval);
+        
+        const selectedAnswer = parseInt(event.target.textContent);
+        const isCorrect = selectedAnswer === currentQuestion.answer;
+        
+        // 모든 버튼 비활성화
+        optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+            btn.disabled = true;
+        });
+        
+        if (isCorrect) {
+            // 정답 처리
+            event.target.className = 'btn btn-success btn-lg w-100 option-btn';
+            score += 10;
+            scoreElement.textContent = score;
+            
+            // 정답 메시지
+            messageElement.className = 'text-center p-3 rounded bg-success text-white';
+            messageElement.textContent = '정답입니다! 🎉';
+            
+            // 게임 속도 증가
+            gameSpeed = Math.max(1000, gameSpeed - 100);
+            
+            // 다음 문제
+            setTimeout(generateQuestion, 1500);
+        } else {
+            // 오답 처리
+            event.target.className = 'btn btn-danger btn-lg w-100 option-btn';
+            
+            // 정답 표시
+            optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+                if (parseInt(btn.textContent) === currentQuestion.answer) {
+                    btn.className = 'btn btn-success btn-lg w-100 option-btn';
+                }
+            });
+            
+            // 오답 메시지
+            messageElement.className = 'text-center p-3 rounded bg-danger text-white';
+            messageElement.textContent = '틀렸습니다!';
+            
+            // 생명 감소
+            lives--;
+            livesElement.textContent = '❤️'.repeat(lives);
+            
+            if (lives > 0) {
+                // 다음 문제
+                setTimeout(generateQuestion, 1500);
+            } else {
+                // 게임 종료
+                endGame();
+            }
+        }
+    }
+    
+    // 타이머 함수
+    function startTimer() {
+        timeLeft = 10;
+        timerElement.style.width = '100%';
+        
+        timerInterval = setInterval(() => {
+            timeLeft -= 0.1;
+            const percentage = (timeLeft / 10) * 100;
+            timerElement.style.width = `${percentage}%`;
+            
+            // 시간 초과
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                
+                // 모든 버튼 비활성화
+                optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.disabled = true;
+                    
+                    // 정답 표시
+                    if (parseInt(btn.textContent) === currentQuestion.answer) {
+                        btn.className = 'btn btn-success btn-lg w-100 option-btn';
+                    }
+                });
+                
+                // 시간 초과 메시지
+                messageElement.className = 'text-center p-3 rounded bg-warning text-dark';
+                messageElement.textContent = '시간 초과!';
+                
+                // 생명 감소
+                lives--;
+                livesElement.textContent = '❤️'.repeat(lives);
+                
+                if (lives > 0) {
+                    // 다음 문제
+                    setTimeout(generateQuestion, 1500);
+                } else {
+                    // 게임 종료
+                    endGame();
+                }
+            }
+        }, 100);
+    }
+    
+    // 게임 종료 함수
+    function endGame() {
+        gameActive = false;
+        clearInterval(timerInterval);
+        
+        // 게임 종료 메시지
+        questionElement.innerHTML = `
+            <h2 class="display-4 fw-bold">게임 종료!</h2>
+            <p>최종 점수: ${score}점</p>
+        `;
+        
+        // 버튼 비활성화
+        optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+            btn.disabled = true;
+            btn.className = 'btn btn-secondary btn-lg w-100 option-btn';
+            btn.textContent = '-';
+        });
+        
+        // 다시 시작 버튼 표시
+        restartButton.classList.remove('d-none');
+    }
+    
+    // 배열 섞기 함수
+    function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
 }
 
 // 게임 페이지에서 자동으로 게임 목록 로드

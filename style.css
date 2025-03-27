@@ -1,8 +1,8 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Noto Sans KR', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f8ff;
+    background-color: #f8f9fa;
 }
 
 #app {
@@ -113,12 +113,14 @@ body {
     border-radius: 10px;
     padding: 15px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    height: 100%;
 }
 
 .game-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
 #game1 { border-color: #ffa500; }
@@ -341,6 +343,7 @@ body {
     opacity: 0.1;
     font-size: 40px;
     animation: float 3s infinite ease-in-out;
+    z-index: 0;
 }
 
 /* 반응형 디자인 */
@@ -375,6 +378,11 @@ body {
 .problem-card {
     background-color: #f8f9fa;
     padding: 20px;
+    transition: transform 0.3s;
+}
+
+.problem-card:hover {
+    transform: translateY(-5px);
 }
 
 .question {
@@ -596,10 +604,12 @@ body {
 
 .game-tag {
     background-color: #e6f2ff;
-    color: #4169e1;
+    color: #0d6efd;
     padding: 3px 8px;
     border-radius: 15px;
     font-size: 12px;
+    display: inline-block;
+    margin: 2px;
 }
 
 .navbar a.active {
@@ -670,6 +680,41 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* 숫자왕 달리기 게임 스타일 */
+.number-run-game {
+    padding: 10px;
+}
+
+.game-board {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    min-height: 300px;
+}
+
+#game-timer {
+    height: 10px;
+    transition: width 0.1s linear;
+}
+
+#game-question {
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 애니메이션 효과 */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.correct-answer {
+    animation: pulse 0.5s ease-in-out;
+}
+
 /* 반응형 디자인 */
 @media (min-width: 768px) {
     .game-detail {
@@ -684,5 +729,10 @@ body {
     
     .game-info {
         flex: 1;
+    }
+    
+    /* 게임 보드 크기 조정 */
+    .game-board {
+        min-height: 400px;
     }
 } 
