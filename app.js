@@ -1622,7 +1622,7 @@ function initializeMathMarketGame(container) {
     ];
     
     // 지폐 및 동전 데이터
-    const moneyOptions = [
+    const currencyData = [
         { value: 50000, type: 'bill', image: '5만원' },
         { value: 10000, type: 'bill', image: '1만원' },
         { value: 5000, type: 'bill', image: '5천원' },
@@ -1756,7 +1756,7 @@ function initializeMathMarketGame(container) {
     const totalAmountInput = container.querySelector('#total-amount');
     const paymentAmountInput = container.querySelector('#payment-amount');
     const changeAmountInput = container.querySelector('#change-amount');
-    const moneyOptions = container.querySelector('#money-options');
+    const moneyOptionsContainer = container.querySelector('#money-options');
     const selectedMoney = container.querySelector('#selected-money');
     const selectedTotal = container.querySelector('#selected-total');
     
@@ -1904,9 +1904,9 @@ function initializeMathMarketGame(container) {
         changeAmountInput.value = currentQuestion.changeAmount.toLocaleString();
         
         // 화폐 옵션 업데이트
-        moneyOptions.innerHTML = '';
+        moneyOptionsContainer.innerHTML = '';
         
-        moneyOptions.forEach(money => {
+        currencyData.forEach(money => {
             const moneyButton = document.createElement('div');
             moneyButton.className = 'col-md-3 col-6';
             moneyButton.innerHTML = `
@@ -1915,7 +1915,7 @@ function initializeMathMarketGame(container) {
                     ${money.image}
                 </button>
             `;
-            moneyOptions.appendChild(moneyButton);
+            moneyOptionsContainer.appendChild(moneyButton);
         });
         
         // 선택한 화폐 초기화
