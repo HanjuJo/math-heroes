@@ -39,14 +39,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 게임 시작 버튼 클릭 이벤트
-    document.querySelectorAll('.play-btn').forEach(function(btn) {
+    document.querySelectorAll('.play-btn, button.btn-primary[data-game], a.btn-primary[data-game]').forEach(function(btn) {
         console.log('게임 시작 버튼 발견:', btn);
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); // 기본 이벤트 방지
             console.log('게임 시작 버튼 클릭됨:', this.getAttribute('data-game'));
             const gameType = this.getAttribute('data-game');
-            const gameTitle = this.parentElement.querySelector('h5') ? 
-                              this.parentElement.querySelector('h5').textContent : 
-                              this.closest('.game-card').querySelector('h5').textContent;
+            let gameTitle = '';
+            
+            // 여러 HTML 구조에 대응
+            if (this.parentElement.querySelector('h5')) {
+                gameTitle = this.parentElement.querySelector('h5').textContent;
+            } else if (this.closest('.game-card') && this.closest('.game-card').querySelector('h5')) {
+                gameTitle = this.closest('.game-card').querySelector('h5').textContent;
+            } else if (this.parentElement.querySelector('h3')) {
+                gameTitle = this.parentElement.querySelector('h3').textContent;
+            } else if (this.closest('.card-body') && this.closest('.card-body').querySelector('.card-title')) {
+                gameTitle = this.closest('.card-body').querySelector('.card-title').textContent;
+            } else {
+                gameTitle = "수학 게임";
+            }
+            
+            console.log('게임 모달 열기:', gameTitle, gameType);
             openGameModal(gameTitle, gameType);
         });
     });
