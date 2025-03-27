@@ -258,31 +258,13 @@ function openGameModal(title, gameType) {
             initializeNumberRunGame(gameContainer);
             break;
         case 'math-warrior':
-            gameContainer.innerHTML = `
-                <div class="game-description">
-                    <p>수학 용사 게임은 곱셈과 나눗셈 문제를 풀어 몬스터를 물리치는 RPG 게임입니다.</p>
-                    <p>준비 중인 게임입니다. 곧 만나볼 수 있습니다!</p>
-                    <img src="https://via.placeholder.com/600x400?text=수학+용사" alt="수학 용사 게임 이미지" class="img-fluid rounded">
-                </div>
-            `;
+            initializeMathWarriorGame(gameContainer);
             break;
         case 'shape-puzzle':
-            gameContainer.innerHTML = `
-                <div class="game-description">
-                    <p>도형 퍼즐 게임은 다양한 도형을 배치하여 패턴을 완성하는 퍼즐 게임입니다.</p>
-                    <p>준비 중인 게임입니다. 곧 만나볼 수 있습니다!</p>
-                    <img src="https://via.placeholder.com/600x400?text=도형+퍼즐" alt="도형 퍼즐 게임 이미지" class="img-fluid rounded">
-                </div>
-            `;
+            initializeShapePuzzleGame(gameContainer);
             break;
         case 'math-market':
-            gameContainer.innerHTML = `
-                <div class="game-description">
-                    <p>수학 시장 게임은 물건 가격을 계산하고 거스름돈을 계산하는 실생활 수학 게임입니다.</p>
-                    <p>준비 중인 게임입니다. 곧 만나볼 수 있습니다!</p>
-                    <img src="https://via.placeholder.com/600x400?text=수학+시장" alt="수학 시장 게임 이미지" class="img-fluid rounded">
-                </div>
-            `;
+            initializeMathMarketGame(gameContainer);
             break;
         default:
             if (gameType.startsWith('game-')) {
@@ -769,6 +751,1352 @@ function initializeNumberRunGame(container) {
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         return shuffled;
+    }
+}
+
+// 수학 용사 게임 초기화
+function initializeMathWarriorGame(container) {
+    // 게임 상태 변수
+    let score = 0;
+    let lives = 3;
+    let gameActive = true;
+    let enemyHealth = 100;
+    let playerHealth = 100;
+    let gameSpeed = 2000; // 문제 출제 시간 간격 (ms)
+    let timerInterval;
+    let currentQuestion = null;
+    let timeLeft = 10;
+    let level = 1;
+    let enemyDefeated = 0;
+    
+    // 게임 UI 구성
+    container.innerHTML = `
+        <div class="game-board p-4 bg-light rounded shadow-sm mb-4">
+            <div class="game-stats mb-4">
+                <div class="row">
+                    <div class="col">
+                        <div class="stat-item">
+                            <div class="stat-value">${score}</div>
+                            <div class="stat-label">점수</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-item">
+                            <div class="stat-value">${level}</div>
+                            <div class="stat-label">레벨</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-item">
+                            <div class="stat-value">❤️❤️❤️</div>
+                            <div class="stat-label">생명</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="battle-area mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center">
+                        <div class="player-avatar mb-2">👨‍🎓</div>
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div id="player-health" class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                        <div class="player-name">나의 전사</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="battle-vs display-5">VS</div>
+                    </div>
+                    <div class="col-md-5 text-center">
+                        <div class="enemy-avatar mb-2">👾</div>
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div id="enemy-health" class="progress-bar bg-danger" style="width: 100%"></div>
+                        </div>
+                        <div class="enemy-name">수학 몬스터</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress mb-3">
+                <div id="game-timer" class="progress-bar bg-warning" role="progressbar" style="width: 100%"></div>
+            </div>
+            
+            <div id="game-question" class="game-problem mb-4">
+                <h2 class="display-4 fw-bold">준비하세요!</h2>
+                <p>3초 후에 게임이 시작됩니다.</p>
+            </div>
+            
+            <div id="game-options" class="game-options">
+                <button class="option-button" disabled>-</button>
+                <button class="option-button" disabled>-</button>
+                <button class="option-button" disabled>-</button>
+                <button class="option-button" disabled>-</button>
+            </div>
+            
+            <div id="game-message" class="game-message"></div>
+        </div>
+        
+        <div class="game-controls">
+            <button id="start-game-btn" class="btn btn-primary btn-lg">게임 시작하기</button>
+            <button id="restart-game-btn" class="btn btn-warning btn-lg d-none">다시 시작하기</button>
+        </div>
+    `;
+    
+    // DOM 요소 참조
+    const scoreElement = container.querySelector('.stat-value:nth-child(1)');
+    const levelElement = container.querySelector('.stat-value:nth-child(3)');
+    const livesElement = container.querySelector('.stat-value:nth-child(5)');
+    const playerHealthBar = container.querySelector('#player-health');
+    const enemyHealthBar = container.querySelector('#enemy-health');
+    const questionElement = container.querySelector('#game-question');
+    const optionButtons = container.querySelectorAll('.option-button');
+    const messageElement = container.querySelector('#game-message');
+    const startButton = container.querySelector('#start-game-btn');
+    const restartButton = container.querySelector('#restart-game-btn');
+    const timerElement = container.querySelector('#game-timer');
+    
+    // 게임 시작 버튼 클릭 이벤트
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', startGame);
+    
+    // 게임 시작 함수
+    function startGame() {
+        // 게임 상태 초기화
+        score = 0;
+        lives = 3;
+        gameActive = true;
+        enemyHealth = 100;
+        playerHealth = 100;
+        gameSpeed = 2000;
+        level = 1;
+        enemyDefeated = 0;
+        
+        // UI 초기화
+        scoreElement.textContent = score;
+        levelElement.textContent = level;
+        livesElement.textContent = '❤️❤️❤️';
+        playerHealthBar.style.width = '100%';
+        enemyHealthBar.style.width = '100%';
+        startButton.classList.add('d-none');
+        restartButton.classList.add('d-none');
+        messageElement.className = 'game-message';
+        messageElement.textContent = '';
+        
+        // 카운트다운 시작
+        questionElement.innerHTML = '<h2 class="display-4 fw-bold">3</h2>';
+        
+        setTimeout(() => {
+            questionElement.innerHTML = '<h2 class="display-4 fw-bold">2</h2>';
+            setTimeout(() => {
+                questionElement.innerHTML = '<h2 class="display-4 fw-bold">1</h2>';
+                setTimeout(() => {
+                    // 첫 번째 문제 출제
+                    generateQuestion();
+                    
+                    // 문제 타이머 시작
+                    startTimer();
+                }, 1000);
+            }, 1000);
+        }, 1000);
+    }
+    
+    // 문제 생성 함수
+    function generateQuestion() {
+        if (!gameActive) return;
+        
+        // 기존 타이머 정지
+        clearInterval(timerInterval);
+        timeLeft = 10;
+        
+        // 레벨에 따라 난이도 조정
+        const maxNum = 5 + level * 2;
+        
+        // 문제 유형 선택 (곱셈 70%, 나눗셈 30%)
+        const questionType = Math.random() < 0.7 ? 'multiplication' : 'division';
+        
+        let num1, num2, correctAnswer, questionText;
+        
+        if (questionType === 'multiplication') {
+            // 곱셈 문제
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            correctAnswer = num1 * num2;
+            questionText = `${num1} × ${num2} = ?`;
+        } else {
+            // 나눗셈 문제 (정수 결과만)
+            num2 = Math.floor(Math.random() * (maxNum - 1)) + 2; // 0으로 나누기 방지
+            correctAnswer = Math.floor(Math.random() * maxNum) + 1;
+            num1 = num2 * correctAnswer; // 정확한 나눗셈 결과를 위해
+            questionText = `${num1} ÷ ${num2} = ?`;
+        }
+        
+        // 오답 생성 (정답의 ±50% 범위, 중복 없이)
+        let options = [correctAnswer];
+        while (options.length < 4) {
+            const offset = Math.floor(Math.random() * correctAnswer) - Math.floor(correctAnswer / 2);
+            const wrongAnswer = correctAnswer + offset;
+            
+            // 양수이고 중복되지 않는 숫자만 사용
+            if (wrongAnswer > 0 && !options.includes(wrongAnswer) && wrongAnswer !== correctAnswer) {
+                options.push(wrongAnswer);
+            }
+        }
+        
+        // 옵션 섞기
+        options = shuffleArray(options);
+        
+        // 현재 문제 기록
+        currentQuestion = {
+            question: questionText,
+            answer: correctAnswer,
+            options: options
+        };
+        
+        // 화면 업데이트
+        questionElement.innerHTML = `<h2 class="display-4 fw-bold">${currentQuestion.question}</h2>`;
+        
+        optionButtons.forEach((btn, index) => {
+            btn.textContent = options[index];
+            btn.disabled = false;
+            btn.className = 'option-button';
+            
+            // 이벤트 리스너 초기화
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        
+        // 새로운 이벤트 리스너 등록
+        container.querySelectorAll('.option-button').forEach(btn => {
+            btn.addEventListener('click', checkAnswer);
+        });
+        
+        // 타이머 시작
+        startTimer();
+    }
+    
+    // 정답 확인 함수
+    function checkAnswer(event) {
+        // 타이머 정지
+        clearInterval(timerInterval);
+        
+        const selectedAnswer = parseInt(event.target.textContent);
+        const isCorrect = selectedAnswer === currentQuestion.answer;
+        
+        // 모든 버튼 비활성화
+        container.querySelectorAll('.option-button').forEach(btn => {
+            btn.disabled = true;
+        });
+        
+        if (isCorrect) {
+            // 정답 처리
+            event.target.className = 'option-button correct';
+            event.target.classList.add('correct-answer'); // 애니메이션 효과
+            
+            // 점수 증가 (레벨에 따라 배율 증가)
+            const pointsEarned = 10 * level;
+            score += pointsEarned;
+            scoreElement.textContent = score;
+            
+            // 적 체력 감소
+            enemyHealth -= 20;
+            if (enemyHealth <= 0) enemyHealth = 0;
+            enemyHealthBar.style.width = `${enemyHealth}%`;
+            
+            // 정답 메시지
+            messageElement.textContent = `정답입니다! +${pointsEarned}점 획득!`;
+            
+            // 적 처치 확인
+            if (enemyHealth <= 0) {
+                enemyDefeated++;
+                
+                // 다음 레벨 확인
+                if (enemyDefeated >= 2) {
+                    enemyDefeated = 0;
+                    level++;
+                    levelElement.textContent = level;
+                    messageElement.textContent = `레벨 업! 이제 ${level}레벨입니다!`;
+                }
+                
+                // 새 적 등장
+                setTimeout(() => {
+                    enemyHealth = 100;
+                    enemyHealthBar.style.width = '100%';
+                    generateQuestion();
+                }, 1500);
+            } else {
+                // 다음 문제
+                setTimeout(generateQuestion, 1000);
+            }
+        } else {
+            // 오답 처리
+            event.target.className = 'option-button incorrect';
+            
+            // 정답 표시
+            container.querySelectorAll('.option-button').forEach(btn => {
+                if (parseInt(btn.textContent) === currentQuestion.answer) {
+                    btn.className = 'option-button correct';
+                }
+            });
+            
+            // 플레이어 체력 감소
+            playerHealth -= 20;
+            if (playerHealth <= 0) playerHealth = 0;
+            playerHealthBar.style.width = `${playerHealth}%`;
+            
+            // 오답 메시지
+            messageElement.textContent = '틀렸습니다!';
+            
+            // 게임오버 확인
+            if (playerHealth <= 0) {
+                lives--;
+                livesElement.textContent = '❤️'.repeat(lives);
+                
+                if (lives > 0) {
+                    // 생명이 남아있으면 체력 회복
+                    setTimeout(() => {
+                        playerHealth = 100;
+                        playerHealthBar.style.width = '100%';
+                        generateQuestion();
+                    }, 1500);
+                } else {
+                    // 게임 종료
+                    endGame();
+                }
+            } else {
+                // 다음 문제
+                setTimeout(generateQuestion, 1000);
+            }
+        }
+    }
+    
+    // 타이머 함수
+    function startTimer() {
+        timeLeft = 10;
+        timerElement.style.width = '100%';
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerElement.style.width = `${(timeLeft / 10) * 100}%`;
+            
+            if (timeLeft <= 0) {
+                // 시간 초과
+                clearInterval(timerInterval);
+                
+                messageElement.className = 'text-center p-3 rounded bg-warning text-dark';
+                messageElement.textContent = '시간 초과!';
+                
+                // 생명 감소
+                lives--;
+                livesElement.textContent = '❤️'.repeat(lives);
+                
+                if (lives > 0) {
+                    // 다음 문제
+                    setTimeout(generateQuestion, 1500);
+                } else {
+                    // 게임 종료
+                    endGame();
+                }
+            }
+        }, 100);
+    }
+    
+    // 게임 종료 함수
+    function endGame() {
+        gameActive = false;
+        clearInterval(timerInterval);
+        
+        // 게임 종료 메시지
+        questionElement.innerHTML = `
+            <h2 class="display-4 fw-bold">게임 종료!</h2>
+            <p>최종 점수: ${score}점</p>
+            <p>달성 레벨: ${level}</p>
+        `;
+        
+        // 버튼 비활성화
+        container.querySelectorAll('.option-button').forEach(btn => {
+            btn.disabled = true;
+            btn.className = 'option-button';
+            btn.textContent = '-';
+        });
+        
+        // 다시 시작 버튼 표시
+        restartButton.classList.remove('d-none');
+    }
+    
+    // 배열 섞기 함수 (기존 함수 재사용)
+    function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+}
+
+// 도형 퍼즐 게임 초기화
+function initializeShapePuzzleGame(container) {
+    // 게임 상태 변수
+    let score = 0;
+    let level = 1;
+    let gameActive = true;
+    let timerInterval;
+    let timeLeft = 45; // 더 긴 시간을 제공 (퍼즐 게임)
+    let currentPattern = null;
+    let selectedShape = null;
+    
+    // 도형 유형 
+    const shapes = ['square', 'circle', 'triangle', 'diamond', 'pentagon', 'hexagon'];
+    const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
+    
+    // 도형 패턴 정의
+    const patterns = [
+        {
+            name: "2x2 사각형",
+            grid: [
+                [1, 1],
+                [1, 1]
+            ],
+            size: 2
+        },
+        {
+            name: "L 모양",
+            grid: [
+                [1, 0],
+                [1, 1]
+            ],
+            size: 2
+        },
+        {
+            name: "역 L 모양",
+            grid: [
+                [0, 1],
+                [1, 1]
+            ],
+            size: 2
+        },
+        {
+            name: "T 모양",
+            grid: [
+                [1, 1, 1],
+                [0, 1, 0]
+            ],
+            size: 3
+        },
+        {
+            name: "십자 모양",
+            grid: [
+                [0, 1, 0],
+                [1, 1, 1],
+                [0, 1, 0]
+            ],
+            size: 3
+        },
+        {
+            name: "Z 모양",
+            grid: [
+                [1, 1, 0],
+                [0, 1, 1]
+            ],
+            size: 3
+        }
+    ];
+    
+    // 게임 UI 구성
+    container.innerHTML = `
+        <div class="game-board p-4 bg-light rounded shadow-sm mb-4">
+            <div class="game-stats mb-4">
+                <div class="row">
+                    <div class="col">
+                        <div class="stat-item">
+                            <div class="stat-value">${score}</div>
+                            <div class="stat-label">점수</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-item">
+                            <div class="stat-value">${level}</div>
+                            <div class="stat-label">레벨</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-item">
+                            <div id="timer-value" class="stat-value">${timeLeft}</div>
+                            <div class="stat-label">남은 시간(초)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress mb-4">
+                <div id="game-timer" class="progress-bar bg-info" role="progressbar" style="width: 100%"></div>
+            </div>
+            
+            <div id="game-message" class="game-message text-center mb-4">
+                <h3>도형을 드래그하여 퍼즐을 완성하세요!</h3>
+                <p>레벨이 올라갈수록 난이도가 높아집니다.</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-7">
+                    <div id="pattern-container" class="pattern-container mb-3">
+                        <h4 class="text-center mb-3">목표 패턴</h4>
+                        <div id="target-pattern" class="target-pattern"></div>
+                    </div>
+                    
+                    <div id="puzzle-grid" class="puzzle-grid">
+                        <!-- 퍼즐 그리드는 자바스크립트로 생성됩니다 -->
+                    </div>
+                </div>
+                
+                <div class="col-md-5">
+                    <div class="shapes-palette">
+                        <h4 class="text-center mb-3">사용 가능한 도형</h4>
+                        <div id="shapes-container" class="shapes-container">
+                            <!-- 도형들은 자바스크립트로 생성됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-controls text-center">
+            <button id="start-game-btn" class="btn btn-primary btn-lg">게임 시작하기</button>
+            <button id="reset-grid-btn" class="btn btn-secondary btn-lg d-none">그리드 초기화</button>
+            <button id="submit-btn" class="btn btn-success btn-lg d-none">제출하기</button>
+            <button id="next-level-btn" class="btn btn-info btn-lg d-none">다음 레벨</button>
+            <button id="restart-game-btn" class="btn btn-warning btn-lg d-none">다시 시작하기</button>
+        </div>
+    `;
+    
+    // DOM 요소 참조
+    const scoreElement = container.querySelector('.stat-value:nth-child(1)');
+    const levelElement = container.querySelector('.stat-value:nth-child(3)');
+    const timerElement = container.querySelector('#timer-value');
+    const timerBar = container.querySelector('#game-timer');
+    const messageElement = container.querySelector('#game-message');
+    const targetPatternElement = container.querySelector('#target-pattern');
+    const puzzleGridElement = container.querySelector('#puzzle-grid');
+    const shapesContainerElement = container.querySelector('#shapes-container');
+    
+    const startButton = container.querySelector('#start-game-btn');
+    const resetGridButton = container.querySelector('#reset-grid-btn');
+    const submitButton = container.querySelector('#submit-btn');
+    const nextLevelButton = container.querySelector('#next-level-btn');
+    const restartButton = container.querySelector('#restart-game-btn');
+    
+    // 게임 시작 버튼 클릭 이벤트
+    startButton.addEventListener('click', startGame);
+    resetGridButton.addEventListener('click', resetGrid);
+    submitButton.addEventListener('click', checkPuzzle);
+    nextLevelButton.addEventListener('click', nextLevel);
+    restartButton.addEventListener('click', startGame);
+    
+    // 게임 시작 함수
+    function startGame() {
+        // 게임 상태 초기화
+        score = 0;
+        level = 1;
+        gameActive = true;
+        timeLeft = 45;
+        
+        // UI 초기화
+        scoreElement.textContent = score;
+        levelElement.textContent = level;
+        timerElement.textContent = timeLeft;
+        timerBar.style.width = '100%';
+        
+        messageElement.textContent = '';
+        messageElement.className = 'game-message';
+        
+        // 버튼 상태 관리
+        startButton.classList.add('d-none');
+        resetGridButton.classList.remove('d-none');
+        submitButton.classList.remove('d-none');
+        nextLevelButton.classList.add('d-none');
+        restartButton.classList.add('d-none');
+        
+        // 첫 번째 레벨 시작
+        initializeLevel();
+        
+        // 타이머 시작
+        startTimer();
+    }
+    
+    // 레벨 초기화
+    function initializeLevel() {
+        // 패턴 선택
+        const patternIndex = (level - 1) % patterns.length;
+        currentPattern = patterns[patternIndex];
+        
+        // 타겟 패턴 표시
+        renderTargetPattern();
+        
+        // 퍼즐 그리드 생성
+        createPuzzleGrid();
+        
+        // 도형 팔레트 생성
+        createShapesPalette();
+    }
+    
+    // 타겟 패턴 렌더링
+    function renderTargetPattern() {
+        targetPatternElement.innerHTML = '';
+        targetPatternElement.style.gridTemplateColumns = `repeat(${currentPattern.size}, 1fr)`;
+        
+        const shapeColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        for (let y = 0; y < currentPattern.grid.length; y++) {
+            for (let x = 0; x < currentPattern.grid[y].length; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'pattern-cell';
+                
+                if (currentPattern.grid[y][x] === 1) {
+                    cell.classList.add('filled');
+                    cell.style.backgroundColor = `var(--${shapeColor})`;
+                }
+                
+                targetPatternElement.appendChild(cell);
+            }
+        }
+    }
+    
+    // 퍼즐 그리드 생성
+    function createPuzzleGrid() {
+        puzzleGridElement.innerHTML = '';
+        const gridSize = Math.max(5, currentPattern.size + 1); // 항상 패턴보다 큰 그리드
+        puzzleGridElement.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+        
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'puzzle-cell';
+                cell.dataset.x = x;
+                cell.dataset.y = y;
+                
+                // 셀에 드롭 이벤트 추가
+                cell.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    cell.classList.add('drag-over');
+                });
+                
+                cell.addEventListener('dragleave', () => {
+                    cell.classList.remove('drag-over');
+                });
+                
+                cell.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    cell.classList.remove('drag-over');
+                    
+                    if (!selectedShape) return;
+                    
+                    // 이미 채워진 셀이면 드롭 불가
+                    if (cell.classList.contains('filled')) return;
+                    
+                    // 셀 채우기
+                    cell.classList.add('filled');
+                    cell.style.backgroundColor = selectedShape.style.backgroundColor;
+                    
+                    // 드래그한 도형 비활성화
+                    selectedShape.classList.add('used');
+                    selectedShape.setAttribute('draggable', 'false');
+                    selectedShape = null;
+                });
+                
+                puzzleGridElement.appendChild(cell);
+            }
+        }
+    }
+    
+    // 도형 팔레트 생성
+    function createShapesPalette() {
+        shapesContainerElement.innerHTML = '';
+        
+        // 레벨에 따라 도형 개수 조정 (최소 5개, 최대 8개)
+        const numShapes = Math.min(5 + Math.floor(level / 2), 8);
+        
+        for (let i = 0; i < numShapes; i++) {
+            const shape = document.createElement('div');
+            shape.className = 'shape-item';
+            
+            // 랜덤 도형 형태
+            const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
+            shape.classList.add(shapeType);
+            
+            // 랜덤 색상
+            const colorIndex = Math.floor(Math.random() * colors.length);
+            shape.style.backgroundColor = `var(--${colors[colorIndex]})`;
+            
+            // 드래그 이벤트 설정
+            shape.setAttribute('draggable', 'true');
+            
+            shape.addEventListener('dragstart', () => {
+                selectedShape = shape;
+            });
+            
+            shapesContainerElement.appendChild(shape);
+        }
+    }
+    
+    // 그리드 초기화
+    function resetGrid() {
+        // 모든 채워진 셀 비우기
+        puzzleGridElement.querySelectorAll('.puzzle-cell.filled').forEach(cell => {
+            cell.classList.remove('filled');
+            cell.style.backgroundColor = '';
+        });
+        
+        // 모든 도형 재사용 가능하게
+        shapesContainerElement.querySelectorAll('.shape-item.used').forEach(shape => {
+            shape.classList.remove('used');
+            shape.setAttribute('draggable', 'true');
+        });
+    }
+    
+    // 퍼즐 검사
+    function checkPuzzle() {
+        const gridSize = Math.max(5, currentPattern.size + 1);
+        const filledCells = [];
+        
+        // 채워진 셀 위치 수집
+        puzzleGridElement.querySelectorAll('.puzzle-cell.filled').forEach(cell => {
+            filledCells.push({
+                x: parseInt(cell.dataset.x),
+                y: parseInt(cell.dataset.y)
+            });
+        });
+        
+        // 패턴과 일치하는지 확인 (패턴의 모양을 찾기)
+        let patternFound = false;
+        
+        // 다양한 위치에서 패턴 검색
+        for (let startY = 0; startY <= gridSize - currentPattern.grid.length; startY++) {
+            for (let startX = 0; startX <= gridSize - currentPattern.grid[0].length; startX++) {
+                let matched = true;
+                
+                // 패턴 검사
+                for (let y = 0; y < currentPattern.grid.length; y++) {
+                    for (let x = 0; x < currentPattern.grid[y].length; x++) {
+                        const cellFilled = filledCells.some(cell => 
+                            cell.x === startX + x && cell.y === startY + y
+                        );
+                        
+                        // 패턴과 다르면 일치하지 않음
+                        if ((currentPattern.grid[y][x] === 1 && !cellFilled) || 
+                            (currentPattern.grid[y][x] === 0 && cellFilled)) {
+                            matched = false;
+                            break;
+                        }
+                    }
+                    if (!matched) break;
+                }
+                
+                if (matched) {
+                    patternFound = true;
+                    break;
+                }
+            }
+            if (patternFound) break;
+        }
+        
+        // 결과 처리
+        if (patternFound) {
+            // 성공
+            clearInterval(timerInterval);
+            
+            // 레벨에 따른 점수 계산
+            const levelPoints = level * 20;
+            // 남은 시간에 따른 보너스
+            const timeBonus = Math.floor(timeLeft * 2);
+            const totalPoints = levelPoints + timeBonus;
+            
+            score += totalPoints;
+            scoreElement.textContent = score;
+            
+            messageElement.textContent = `
+                <h3 class="text-success">축하합니다! 패턴을 완성했습니다!</h3>
+                <p>레벨 점수: ${levelPoints}점 + 시간 보너스: ${timeBonus}점 = 총 ${totalPoints}점</p>
+            `;
+            
+            // 버튼 상태 변경
+            resetGridButton.classList.add('d-none');
+            submitButton.classList.add('d-none');
+            nextLevelButton.classList.remove('d-none');
+        } else {
+            // 실패
+            messageElement.textContent = `
+                <h3 class="text-danger">패턴이 일치하지 않습니다!</h3>
+                <p>다시 시도해보세요.</p>
+            `;
+        }
+    }
+    
+    // 다음 레벨
+    function nextLevel() {
+        level++;
+        levelElement.textContent = level;
+        
+        // 타이머 재설정 (레벨이 올라갈수록 시간 감소)
+        timeLeft = Math.max(30, 45 - (level * 2));
+        timerElement.textContent = timeLeft;
+        timerBar.style.width = '100%';
+        
+        // 메시지 초기화
+        messageElement.textContent = `<h3>레벨 ${level} - 새로운 패턴을 완성하세요!</h3>`;
+        
+        // 버튼 상태 변경
+        resetGridButton.classList.remove('d-none');
+        submitButton.classList.remove('d-none');
+        nextLevelButton.classList.add('d-none');
+        
+        // 새 레벨 초기화
+        initializeLevel();
+        
+        // 타이머 시작
+        startTimer();
+    }
+    
+    // 타이머 함수
+    function startTimer() {
+        clearInterval(timerInterval);
+        
+        const totalTime = timeLeft;
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            timerBar.style.width = `${(timeLeft / totalTime) * 100}%`;
+            
+            if (timeLeft <= 0) {
+                // 시간 초과
+                clearInterval(timerInterval);
+                endGame();
+            }
+        }, 1000);
+    }
+    
+    // 게임 종료
+    function endGame() {
+        gameActive = false;
+        clearInterval(timerInterval);
+        
+        // 게임 종료 메시지
+        messageElement.textContent = `
+            <h3 class="text-danger">게임 종료!</h3>
+            <p>최종 점수: ${score}점</p>
+            <p>최종 레벨: ${level}</p>
+        `;
+        
+        // 버튼 상태 변경
+        resetGridButton.classList.add('d-none');
+        submitButton.classList.add('d-none');
+        nextLevelButton.classList.add('d-none');
+        restartButton.classList.remove('d-none');
+    }
+}
+
+// 수학 시장 게임 초기화
+function initializeMathMarketGame(container) {
+    // 게임 상태 변수
+    let score = 0;
+    let level = 1;
+    let lives = 3;
+    let gameActive = true;
+    let timerInterval;
+    let timeLeft = 30;
+    let currentQuestion = null;
+    
+    // 상품 데이터
+    const products = [
+        { name: '연필', price: 1000, image: '✏️' },
+        { name: '공책', price: 2500, image: '📔' },
+        { name: '지우개', price: 500, image: '🧽' },
+        { name: '색연필 세트', price: 5000, image: '🖍️' },
+        { name: '물병', price: 3000, image: '🧴' },
+        { name: '가방', price: 15000, image: '🎒' },
+        { name: '도시락', price: 8000, image: '🍱' },
+        { name: '수학책', price: 12000, image: '📚' },
+        { name: '사과', price: 1500, image: '🍎' },
+        { name: '바나나', price: 2000, image: '🍌' },
+        { name: '오렌지', price: 1000, image: '🍊' },
+        { name: '우유', price: 1800, image: '🥛' }
+    ];
+    
+    // 지폐 및 동전 데이터
+    const moneyOptions = [
+        { value: 50000, type: 'bill', image: '5만원' },
+        { value: 10000, type: 'bill', image: '1만원' },
+        { value: 5000, type: 'bill', image: '5천원' },
+        { value: 1000, type: 'bill', image: '1천원' },
+        { value: 500, type: 'coin', image: '500원' },
+        { value: 100, type: 'coin', image: '100원' },
+        { value: 50, type: 'coin', image: '50원' },
+        { value: 10, type: 'coin', image: '10원' }
+    ];
+    
+    // 게임 UI 구성
+    container.innerHTML = `
+        <div class="game-board p-4 bg-light rounded shadow-sm mb-4">
+            <div class="game-stats mb-4">
+                <div class="row">
+                    <div class="col">
+                        <div class="stat-item">
+                            <div class="stat-value">${score}</div>
+                            <div class="stat-label">점수</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-item">
+                            <div class="stat-value">${level}</div>
+                            <div class="stat-label">레벨</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-item">
+                            <div class="stat-value">❤️❤️❤️</div>
+                            <div class="stat-label">생명</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-item">
+                            <div id="timer-value" class="stat-value">${timeLeft}</div>
+                            <div class="stat-label">시간(초)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress mb-4">
+                <div id="game-timer" class="progress-bar bg-info" role="progressbar" style="width: 100%"></div>
+            </div>
+            
+            <div id="market-container">
+                <div id="store-section" class="store-section mb-4">
+                    <h3 class="text-center mb-3">수학 시장에 오신 것을 환영합니다!</h3>
+                    <div id="products-display" class="row g-3"></div>
+                </div>
+                
+                <div id="question-section" class="question-section p-3 rounded mb-4 d-none">
+                    <h4 id="question-text" class="mb-3">문제 텍스트</h4>
+                    
+                    <div id="shopping-cart" class="shopping-cart mb-3"></div>
+                    
+                    <div id="calculation-area" class="calculation-area mb-3">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">총 금액</span>
+                                    <input type="text" id="total-amount" class="form-control" readonly>
+                                    <span class="input-group-text">원</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">지불 금액</span>
+                                    <input type="text" id="payment-amount" class="form-control" readonly>
+                                    <span class="input-group-text">원</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="money-selection" class="money-selection mb-3">
+                            <h5 class="mb-2">거스름돈 계산하기</h5>
+                            <div id="money-options" class="row g-2"></div>
+                        </div>
+                        
+                        <div id="change-calculation" class="change-calculation mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text">거스름돈</span>
+                                <input type="text" id="change-amount" class="form-control" readonly>
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                        
+                        <div id="selected-change" class="selected-change mb-3">
+                            <h5>선택한 거스름돈</h5>
+                            <div id="selected-money" class="row g-2"></div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span>합계: <span id="selected-total">0</span>원</span>
+                                <button id="reset-change-btn" class="btn btn-sm btn-secondary">초기화</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="question-message" class="alert d-none mb-3"></div>
+                    
+                    <div class="text-center">
+                        <button id="submit-answer-btn" class="btn btn-primary">답안 제출하기</button>
+                    </div>
+                </div>
+                
+                <div id="game-message" class="game-message text-center mb-4"></div>
+            </div>
+        </div>
+        
+        <div class="game-controls text-center">
+            <button id="start-game-btn" class="btn btn-primary btn-lg">게임 시작하기</button>
+            <button id="restart-game-btn" class="btn btn-warning btn-lg d-none">다시 시작하기</button>
+        </div>
+    `;
+    
+    // DOM 요소 참조
+    const scoreElement = container.querySelector('.stat-value:nth-child(1)');
+    const levelElement = container.querySelector('.stat-value:nth-child(3)');
+    const livesElement = container.querySelector('.stat-value:nth-child(5)');
+    const timerElement = container.querySelector('#timer-value');
+    const timerBar = container.querySelector('#game-timer');
+    
+    const storeSection = container.querySelector('#store-section');
+    const questionSection = container.querySelector('#question-section');
+    const questionText = container.querySelector('#question-text');
+    const messageElement = container.querySelector('#game-message');
+    const questionMessage = container.querySelector('#question-message');
+    
+    const productsDisplay = container.querySelector('#products-display');
+    const shoppingCart = container.querySelector('#shopping-cart');
+    const totalAmountInput = container.querySelector('#total-amount');
+    const paymentAmountInput = container.querySelector('#payment-amount');
+    const changeAmountInput = container.querySelector('#change-amount');
+    const moneyOptions = container.querySelector('#money-options');
+    const selectedMoney = container.querySelector('#selected-money');
+    const selectedTotal = container.querySelector('#selected-total');
+    
+    const startButton = container.querySelector('#start-game-btn');
+    const restartButton = container.querySelector('#restart-game-btn');
+    const submitAnswerButton = container.querySelector('#submit-answer-btn');
+    const resetChangeButton = container.querySelector('#reset-change-btn');
+    
+    // 게임 시작 버튼 클릭 이벤트
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', startGame);
+    submitAnswerButton.addEventListener('click', checkAnswer);
+    resetChangeButton.addEventListener('click', resetSelectedChange);
+    
+    // 게임 시작 함수
+    function startGame() {
+        // 게임 상태 초기화
+        score = 0;
+        level = 1;
+        lives = 3;
+        gameActive = true;
+        timeLeft = 30;
+        
+        // UI 초기화
+        scoreElement.textContent = score;
+        levelElement.textContent = level;
+        livesElement.textContent = '❤️❤️❤️';
+        timerElement.textContent = timeLeft;
+        timerBar.style.width = '100%';
+        
+        messageElement.textContent = '';
+        messageElement.className = 'game-message';
+        
+        // 버튼 상태 관리
+        startButton.classList.add('d-none');
+        restartButton.classList.add('d-none');
+        
+        // 상점 표시
+        showStore();
+        
+        // 문제 생성
+        generateQuestion();
+    }
+    
+    // 상점 표시
+    function showStore() {
+        storeSection.classList.remove('d-none');
+        questionSection.classList.add('d-none');
+        
+        // 상품 표시
+        productsDisplay.innerHTML = '';
+        
+        products.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'col-md-3 col-6';
+            productCard.innerHTML = `
+                <div class="product-card text-center p-2 rounded">
+                    <div class="product-image display-4 mb-2">${product.image}</div>
+                    <h5 class="product-name">${product.name}</h5>
+                    <p class="product-price mb-1">${product.price.toLocaleString()}원</p>
+                </div>
+            `;
+            productsDisplay.appendChild(productCard);
+        });
+        
+        // 3초 후 문제 표시
+        setTimeout(() => {
+            storeSection.classList.add('d-none');
+            questionSection.classList.remove('d-none');
+            
+            // 타이머 시작
+            startTimer();
+        }, 3000);
+    }
+    
+    // 문제 생성
+    function generateQuestion() {
+        // 레벨에 따른 난이도 조정
+        const numProducts = 1 + Math.min(level, 3); // 최대 4개 상품
+        const maxPrice = level <= 2 ? 10000 : 20000; // 레벨에 따른 최대 가격
+        
+        // 랜덤 상품 선택
+        const selectedProducts = [];
+        const availableProducts = [...products];
+        
+        for (let i = 0; i < numProducts; i++) {
+            const randomIndex = Math.floor(Math.random() * availableProducts.length);
+            const product = availableProducts.splice(randomIndex, 1)[0];
+            const quantity = Math.floor(Math.random() * 3) + 1; // 1~3개 랜덤 수량
+            selectedProducts.push({
+                ...product,
+                quantity: quantity
+            });
+        }
+        
+        // 총 금액 계산
+        const totalAmount = selectedProducts.reduce((sum, product) => 
+            sum + (product.price * product.quantity), 0);
+        
+        // 지불 금액 계산 (총 금액보다 큰 랜덤 금액)
+        const paymentUnit = level <= 2 ? 1000 : 5000;
+        const minPayment = Math.ceil(totalAmount / paymentUnit) * paymentUnit;
+        const maxPayment = Math.min(minPayment + (level * paymentUnit), 100000);
+        const paymentAmount = minPayment;
+        
+        // 거스름돈 계산
+        const changeAmount = paymentAmount - totalAmount;
+        
+        // 문제 저장
+        currentQuestion = {
+            products: selectedProducts,
+            totalAmount: totalAmount,
+            paymentAmount: paymentAmount,
+            changeAmount: changeAmount
+        };
+        
+        // 화면 업데이트
+        updateQuestionDisplay();
+    }
+    
+    // 문제 화면 업데이트
+    function updateQuestionDisplay() {
+        // 문제 텍스트 설정
+        questionText.textContent = `다음 상품의 총 금액과 거스름돈을 계산하세요.`;
+        
+        // 장바구니 업데이트
+        shoppingCart.innerHTML = '';
+        currentQuestion.products.forEach(product => {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item d-flex align-items-center mb-2 p-2 rounded';
+            cartItem.innerHTML = `
+                <div class="product-image me-3">${product.image}</div>
+                <div class="product-details flex-grow-1">
+                    <div class="product-name fw-bold">${product.name}</div>
+                    <div class="product-price">${product.price.toLocaleString()}원 x ${product.quantity}개</div>
+                </div>
+                <div class="product-total fw-bold">${(product.price * product.quantity).toLocaleString()}원</div>
+            `;
+            shoppingCart.appendChild(cartItem);
+        });
+        
+        // 계산 영역 업데이트
+        totalAmountInput.value = currentQuestion.totalAmount.toLocaleString();
+        paymentAmountInput.value = currentQuestion.paymentAmount.toLocaleString();
+        changeAmountInput.value = currentQuestion.changeAmount.toLocaleString();
+        
+        // 화폐 옵션 업데이트
+        moneyOptions.innerHTML = '';
+        
+        moneyOptions.forEach(money => {
+            const moneyButton = document.createElement('div');
+            moneyButton.className = 'col-md-3 col-6';
+            moneyButton.innerHTML = `
+                <button class="btn btn-outline-primary money-btn w-100" 
+                        data-value="${money.value}">
+                    ${money.image}
+                </button>
+            `;
+            moneyOptions.appendChild(moneyButton);
+        });
+        
+        // 선택한 화폐 초기화
+        resetSelectedChange();
+        
+        // 화폐 버튼 이벤트 설정
+        container.querySelectorAll('.money-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const value = parseInt(btn.getAttribute('data-value'));
+                addSelectedMoney(value);
+            });
+        });
+        
+        // 메시지 초기화
+        questionMessage.className = 'alert d-none';
+        questionMessage.textContent = '';
+    }
+    
+    // 선택한 화폐 추가
+    function addSelectedMoney(value) {
+        const moneyItem = document.createElement('div');
+        moneyItem.className = 'col-md-3 col-6';
+        moneyItem.innerHTML = `
+            <div class="selected-money-item p-2 rounded text-center">
+                ${value.toLocaleString()}원
+                <button class="btn-close remove-money" data-value="${value}"></button>
+            </div>
+        `;
+        
+        selectedMoney.appendChild(moneyItem);
+        
+        // 금액 합계 업데이트
+        updateSelectedTotal();
+        
+        // 삭제 버튼 이벤트
+        moneyItem.querySelector('.remove-money').addEventListener('click', () => {
+            moneyItem.remove();
+            updateSelectedTotal();
+        });
+    }
+    
+    // 선택한 금액 합계 업데이트
+    function updateSelectedTotal() {
+        let total = 0;
+        container.querySelectorAll('.selected-money-item').forEach(item => {
+            const value = parseInt(item.querySelector('.remove-money').getAttribute('data-value'));
+            total += value;
+        });
+        
+        selectedTotal.textContent = total.toLocaleString();
+    }
+    
+    // 선택한 화폐 초기화
+    function resetSelectedChange() {
+        selectedMoney.innerHTML = '';
+        selectedTotal.textContent = '0';
+    }
+    
+    // 정답 확인
+    function checkAnswer() {
+        // 선택한 금액 합계 계산
+        let total = 0;
+        container.querySelectorAll('.selected-money-item').forEach(item => {
+            const value = parseInt(item.querySelector('.remove-money').getAttribute('data-value'));
+            total += value;
+        });
+        
+        // 정답 확인
+        const isCorrect = total === currentQuestion.changeAmount;
+        
+        // 결과 표시
+        if (isCorrect) {
+            questionMessage.className = 'alert alert-success';
+            questionMessage.textContent = '정답입니다! 🎉';
+            
+            // 점수 증가
+            const pointsEarned = 10 * level;
+            score += pointsEarned;
+            scoreElement.textContent = score;
+            
+            // 타이머 정지
+            clearInterval(timerInterval);
+            
+            // 3초 후 다음 레벨
+            setTimeout(() => {
+                level++;
+                levelElement.textContent = level;
+                
+                // 타이머 재설정
+                timeLeft = Math.max(20, 30 - (level * 2));
+                timerElement.textContent = timeLeft;
+                
+                // 새 문제 생성
+                generateQuestion();
+                
+                // 타이머 시작
+                startTimer();
+            }, 2000);
+        } else {
+            questionMessage.className = 'alert alert-danger';
+            
+            // 금액이 맞지 않는 경우
+            if (total !== currentQuestion.changeAmount) {
+                questionMessage.textContent = `틀렸습니다. 정확한 거스름돈은 ${currentQuestion.changeAmount.toLocaleString()}원 입니다.`;
+            }
+            
+            // 생명 감소
+            lives--;
+            livesElement.textContent = '❤️'.repeat(lives);
+            
+            if (lives <= 0) {
+                // 게임 종료
+                endGame();
+            } else {
+                // 2초 후 재시도
+                setTimeout(() => {
+                    resetSelectedChange();
+                    questionMessage.className = 'alert d-none';
+                }, 2000);
+            }
+        }
+    }
+    
+    // 타이머 함수
+    function startTimer() {
+        clearInterval(timerInterval);
+        
+        timerBar.style.width = '100%';
+        timerElement.textContent = timeLeft;
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            timerBar.style.width = `${(timeLeft / 30) * 100}%`;
+            
+            if (timeLeft <= 0) {
+                // 시간 초과
+                clearInterval(timerInterval);
+                
+                questionMessage.className = 'alert alert-warning';
+                questionMessage.textContent = '시간 초과!';
+                
+                // 생명 감소
+                lives--;
+                livesElement.textContent = '❤️'.repeat(lives);
+                
+                if (lives <= 0) {
+                    // 게임 종료
+                    endGame();
+                } else {
+                    // 2초 후 다시 시작
+                    setTimeout(() => {
+                        // 타이머 재설정
+                        timeLeft = Math.max(20, 30 - (level * 2));
+                        timerElement.textContent = timeLeft;
+                        
+                        // 새 문제 생성
+                        generateQuestion();
+                        
+                        // 타이머 시작
+                        startTimer();
+                    }, 2000);
+                }
+            }
+        }, 1000);
+    }
+    
+    // 게임 종료
+    function endGame() {
+        clearInterval(timerInterval);
+        gameActive = false;
+        
+        // 메시지 표시
+        messageElement.innerHTML = `
+            <h3 class="text-danger">게임 종료!</h3>
+            <p>최종 점수: ${score}점</p>
+            <p>최종 레벨: ${level}</p>
+        `;
+        
+        // 버튼 상태 변경
+        restartButton.classList.remove('d-none');
     }
 }
 

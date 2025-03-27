@@ -15,6 +15,14 @@
     --body-bg: #F5F7FA;
     --body-color: #495057;
     
+    /* 도형 색상 */
+    --red: #FF6B6B;
+    --blue: #4D7EE8;
+    --green: #51CF66;
+    --yellow: #FFD43B;
+    --purple: #9775FA;
+    --orange: #FF922B;
+    
     /* 그라디언트 */
     --primary-gradient: linear-gradient(135deg, #4D7EE8, #3A65C0);
     
@@ -390,4 +398,200 @@ footer {
     .option-button {
         width: 100%;
     }
+}
+
+/* 도형 퍼즐 게임 스타일 */
+.pattern-container {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.target-pattern {
+    display: grid;
+    grid-gap: 4px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.pattern-cell {
+    width: 100%;
+    padding-bottom: 100%; /* 정사각형 비율 유지 */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--light);
+}
+
+.pattern-cell.filled {
+    border: none;
+}
+
+.puzzle-grid {
+    display: grid;
+    grid-gap: 4px;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.puzzle-cell {
+    width: 100%;
+    padding-bottom: 100%; /* 정사각형 비율 유지 */
+    border: 1px dashed rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--light);
+    transition: var(--transition-base);
+}
+
+.puzzle-cell.drag-over {
+    background-color: rgba(77, 126, 232, 0.2);
+    border: 1px dashed var(--primary);
+}
+
+.puzzle-cell.filled {
+    border: none;
+}
+
+.shapes-palette {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.shapes-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1rem;
+}
+
+.shape-item {
+    width: 100%;
+    padding-bottom: 100%;
+    border-radius: var(--border-radius);
+    cursor: grab;
+    transition: var(--transition-base);
+    position: relative;
+}
+
+.shape-item:hover {
+    transform: scale(1.05);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.shape-item.used {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 도형 모양 */
+.shape-item.square {
+    border-radius: var(--border-radius-sm);
+}
+
+.shape-item.circle {
+    border-radius: 50%;
+}
+
+.shape-item.triangle {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.shape-item.diamond {
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.shape-item.pentagon {
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+
+.shape-item.hexagon {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+/* 수학 시장 게임 스타일 */
+.store-section {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow-sm);
+}
+
+.product-card {
+    background-color: var(--white);
+    box-shadow: var(--box-shadow-sm);
+    transition: var(--transition-base);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow);
+}
+
+.product-image {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.product-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.product-price {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.question-section {
+    background-color: var(--white);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.cart-item {
+    background-color: var(--light);
+    border-radius: var(--border-radius);
+    transition: var(--transition-base);
+}
+
+.cart-item:hover {
+    background-color: var(--primary-light);
+}
+
+.calculation-area {
+    background-color: var(--light);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+}
+
+.money-btn {
+    padding: 0.75rem 0.5rem;
+    font-weight: bold;
+    transition: var(--transition-base);
+}
+
+.money-btn:hover {
+    transform: translateY(-2px);
+}
+
+.selected-money-item {
+    background-color: var(--primary-light);
+    position: relative;
+    padding-right: 2rem;
+    font-weight: 500;
+}
+
+.remove-money {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.75rem;
+} 
 } 
