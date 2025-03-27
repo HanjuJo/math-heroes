@@ -57,6 +57,64 @@ const subjects = {
     ]
 };
 
+// 게임 데이터
+const games = [
+    {
+        id: "number-run",
+        title: "숫자왕 달리기",
+        description: "덧셈과 뺄셈을 학습하며 장애물을 피해 달려요!",
+        level: "★★☆",
+        grades: ["1", "2"],
+        tags: ["덧셈", "뺄셈"],
+        image: "🏃‍♂️"
+    },
+    {
+        id: "math-warrior",
+        title: "수학 용사",
+        description: "곱셈과 나눗셈으로 몬스터를 물리치는 RPG 게임입니다!",
+        level: "★★★",
+        grades: ["3", "4"],
+        tags: ["곱셈", "나눗셈"],
+        image: "⚔️"
+    },
+    {
+        id: "shape-puzzle",
+        title: "도형 퍼즐",
+        description: "다양한 도형을 배치하여 패턴을 완성하는 퍼즐 게임입니다!",
+        level: "★★☆",
+        grades: ["3", "4", "5", "6"],
+        tags: ["도형", "패턴"],
+        image: "🧩"
+    },
+    {
+        id: "math-market",
+        title: "수학 시장",
+        description: "물건 가격을 계산하고 거스름돈을 계산하는 실생활 수학 게임입니다!",
+        level: "★☆☆",
+        grades: ["1", "2", "3"],
+        tags: ["덧셈", "뺄셈"],
+        image: "🛒"
+    },
+    {
+        id: "fraction-space",
+        title: "분수 우주여행",
+        description: "분수의 개념을 배우며 우주를 탐험하는 게임입니다!",
+        level: "★★★",
+        grades: ["5", "6"],
+        tags: ["분수", "비율"],
+        image: "🚀"
+    },
+    {
+        id: "math-wizard",
+        title: "수학 마법사",
+        description: "수학 문제를 풀어 마법의 힘을 얻는 어드벤처 게임입니다!",
+        level: "★★☆",
+        grades: ["4", "5", "6"],
+        tags: ["혼합연산", "방정식"],
+        image: "🧙‍♂️"
+    }
+];
+
 // API 엔드포인트
 app.get('/api/problems/:grade', (req, res) => {
     const grade = req.params.grade;
@@ -66,6 +124,21 @@ app.get('/api/problems/:grade', (req, res) => {
 app.get('/api/subjects/:subject', (req, res) => {
     const subject = req.params.subject;
     res.json(subjects[subject] || []);
+});
+
+app.get('/api/games', (req, res) => {
+    res.json(games);
+});
+
+app.get('/api/games/:id', (req, res) => {
+    const gameId = req.params.id;
+    const game = games.find(g => g.id === gameId);
+    
+    if (game) {
+        res.json(game);
+    } else {
+        res.status(404).json({ error: "게임을 찾을 수 없습니다." });
+    }
 });
 
 // 루트 페이지

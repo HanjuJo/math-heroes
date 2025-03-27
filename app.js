@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 수학 기호 애니메이션 추가
     addMathSymbols();
     
+    // 로컬 스토리지에서 학습 진도 정보 로드
+    loadProgressData();
+    
     // 학년별 메뉴 클릭 이벤트
     document.querySelectorAll('#grade-menu .menu-item').forEach(function(item) {
         item.addEventListener('click', function() {
@@ -213,6 +216,7 @@ function showProblems(category, problems) {
                     result.textContent = '정답입니다! 🎉';
                     result.className = 'result correct';
                     this.classList.add('correct');
+                    updateProgress(problem, true);
                 } else {
                     result.textContent = '틀렸습니다. 정답은 ' + problem.answer + ' 입니다.';
                     result.className = 'result wrong';
@@ -224,6 +228,7 @@ function showProblems(category, problems) {
                             b.classList.add('correct');
                         }
                     });
+                    updateProgress(problem, false);
                 }
                 
                 result.style.display = 'block';
@@ -295,4 +300,44 @@ function openGameModal(title, gameType) {
 // 게임 모달 닫기
 function closeGameModal() {
     document.getElementById('game-modal').style.display = 'none';
+}
+
+// 학습 진도 데이터 로드
+function loadProgressData() {
+    // 로컬 스토리지에서 학습 데이터 가져오기
+    const completedProblems = JSON.parse(localStorage.getItem('completedProblems')) || [];
+    const totalProblems = 12; // 학년별 2문제 * 6학년 = 12문제
+    
+    // 진도율 계산 및 표시
+    const progressPercent = Math.min(Math.round((completedProblems.length / totalProblems) * 100), 100);
+    document.getElementById('progress-percent').textContent = progressPercent + '%';
+    document.getElementById('progress-fill').style.width = progressPercent + '%';
+}
+
+// 문제 완료 시 진도 업데이트
+function updateProgress(problem, isCorrect) {
+    if (!isCorrect) return; // 정답일 때만 진도 업데이트
+    
+    // 로컬 스토리지에서 현재 데이터 가져오기
+    let completedProblems = JSON.parse(localStorage.getItem('completedProblems')) || [];
+    
+    // 이미 완료한 문제인지 확인
+    const alreadyCompleted = completedProblems.some(p => 
+        p.question === problem.question && p.answer === problem.answer
+    );
+    
+    // 아직 완료하지 않은 문제라면 추가
+    if (!alreadyCompleted) {
+        completedProblems.push({
+            question: problem.question,
+            answer: problem.answer,
+            date: new Date().toISOString()
+        });
+        
+        // 로컬 스토리지에 저장
+        localStorage.setItem('completedProblems', JSON.stringify(completedProblems));
+        
+        // 진도 업데이트
+        loadProgressData();
+    }
 } 

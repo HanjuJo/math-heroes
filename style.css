@@ -456,4 +456,153 @@ body {
     border-radius: 5px;
     margin-top: 15px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 학습 진도 바 스타일 */
+.progress-container {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.progress-text {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.progress-bar {
+    width: 100%;
+    max-width: 500px;
+    height: 15px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%; /* 초기값 */
+    background-color: #32cd32;
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out;
+}
+
+/* 문제 리스트 스타일 */
+.completed-problems {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.completed-problems h3 {
+    margin-top: 0;
+    color: #4169e1;
+}
+
+.problem-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.problem-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.problem-list .date {
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+/* 게임 목록 페이지 스타일 */
+.games-container {
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.games-container h2 {
+    color: #4169e1;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.game-card-large {
+    background-color: #fffaf0;
+    border: 2px solid #4169e1;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.game-card-large:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.game-image-large {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+.game-card-large h3 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.game-level {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.stars {
+    color: #ffa500;
+    letter-spacing: 2px;
+}
+
+.game-card-large p {
+    color: #666;
+    margin: 10px 0;
+    flex-grow: 1;
+}
+
+.game-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.game-tag {
+    background-color: #e6f2ff;
+    color: #4169e1;
+    padding: 3px 8px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+.navbar a.active {
+    font-weight: bold;
+    text-decoration: underline;
 } 
