@@ -1,4 +1,9 @@
+// 디버깅 로그
+console.log('app.js 파일이 로드되었습니다.');
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM이 완전히 로드되었습니다.');
+    
     // 수학 기호 애니메이션 추가
     addMathSymbols();
     
@@ -6,79 +11,109 @@ document.addEventListener('DOMContentLoaded', function() {
     loadProgressData();
     
     // 학년별 메뉴 클릭 이벤트
-    document.querySelectorAll('#grade-menu .menu-item').forEach(function(item) {
+    document.querySelectorAll('#grade-menu .menu-item, #grade-menu button').forEach(function(item) {
+        console.log('학년 메뉴 항목 발견:', item);
         item.addEventListener('click', function() {
+            console.log('학년 메뉴 클릭됨:', this.getAttribute('data-grade'));
             const grade = this.getAttribute('data-grade');
             fetchProblems(grade);
             
             // 선택된 학년 강조
-            document.querySelectorAll('#grade-menu .menu-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#grade-menu .menu-item, #grade-menu button').forEach(el => el.classList.remove('active'));
             this.classList.add('active');
         });
     });
 
     // 단원별 메뉴 클릭 이벤트
-    document.querySelectorAll('#subject-menu .menu-item').forEach(function(item) {
+    document.querySelectorAll('#subject-menu .menu-item, #subject-menu button').forEach(function(item) {
+        console.log('단원 메뉴 항목 발견:', item);
         item.addEventListener('click', function() {
+            console.log('단원 메뉴 클릭됨:', this.getAttribute('data-subject'));
             const subject = this.getAttribute('data-subject');
             fetchSubject(subject);
             
             // 선택된 단원 강조
-            document.querySelectorAll('#subject-menu .menu-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#subject-menu .menu-item, #subject-menu button').forEach(el => el.classList.remove('active'));
             this.classList.add('active');
         });
     });
 
     // 게임 시작 버튼 클릭 이벤트
     document.querySelectorAll('.play-btn').forEach(function(btn) {
+        console.log('게임 시작 버튼 발견:', btn);
         btn.addEventListener('click', function() {
+            console.log('게임 시작 버튼 클릭됨:', this.getAttribute('data-game'));
             const gameType = this.getAttribute('data-game');
-            const gameTitle = this.parentElement.querySelector('h3').textContent;
+            const gameTitle = this.parentElement.querySelector('h5') ? 
+                              this.parentElement.querySelector('h5').textContent : 
+                              this.closest('.game-card').querySelector('h5').textContent;
             openGameModal(gameTitle, gameType);
         });
     });
     
     // 게임 카드 클릭 이벤트 (이미지나 제목 클릭 시)
-    document.querySelectorAll('.game-card .game-image, .game-card h3').forEach(function(element) {
+    document.querySelectorAll('.game-card .game-image, .game-card h5').forEach(function(element) {
+        console.log('게임 카드 요소 발견:', element);
         element.addEventListener('click', function() {
+            console.log('게임 카드 요소 클릭됨');
             const card = this.closest('.game-card');
             const gameType = card.querySelector('.play-btn').getAttribute('data-game');
-            const gameTitle = card.querySelector('h3').textContent;
+            const gameTitle = card.querySelector('h5').textContent;
             openGameModal(gameTitle, gameType);
         });
     });
 
     // 모달 닫기 버튼 클릭 이벤트
-    document.querySelector('.close-modal').addEventListener('click', function() {
-        closeGameModal();
-    });
+    const closeModalBtn = document.querySelector('.close-modal');
+    if (closeModalBtn) {
+        console.log('모달 닫기 버튼 발견');
+        closeModalBtn.addEventListener('click', function() {
+            console.log('모달 닫기 버튼 클릭됨');
+            closeGameModal();
+        });
+    } else {
+        console.error('모달 닫기 버튼을 찾을 수 없습니다.');
+    }
     
     // 모달 외부 클릭 시 닫기
     window.addEventListener('click', function(event) {
         const modal = document.getElementById('game-modal');
         if (event.target == modal) {
+            console.log('모달 외부 클릭됨');
             closeGameModal();
         }
     });
 
     // 더 많은 게임 보기 버튼 클릭 이벤트
-    document.getElementById('more-games').addEventListener('click', function() {
-        alert('더 많은 게임을 준비 중입니다. 곧 만나볼 수 있어요!');
-    });
+    const moreGamesBtn = document.getElementById('more-games');
+    if (moreGamesBtn) {
+        console.log('더 많은 게임 버튼 발견');
+        moreGamesBtn.addEventListener('click', function() {
+            console.log('더 많은 게임 버튼 클릭됨');
+            alert('더 많은 게임을 준비 중입니다. 곧 만나볼 수 있어요!');
+        });
+    }
     
     // 쿠팡 상품 자세히 보기 버튼 클릭 이벤트
     document.querySelectorAll('.buy-btn').forEach(function(btn) {
+        console.log('상품 버튼 발견:', btn);
         btn.addEventListener('click', function() {
-            const productName = this.parentElement.querySelector('h3').textContent;
+            console.log('상품 버튼 클릭됨');
+            const productName = this.parentElement.querySelector('h6').textContent;
             alert(`${productName} 상품 페이지로 이동합니다.`);
             // 여기에 쿠팡 파트너스 링크로 이동하는 코드 추가
         });
     });
     
     // 더 많은 상품 보기 버튼 클릭 이벤트
-    document.getElementById('more-products').addEventListener('click', function() {
-        alert('더 많은 추천 상품을 준비 중입니다. 곧 만나볼 수 있어요!');
-    });
+    const moreProductsBtn = document.getElementById('more-products');
+    if (moreProductsBtn) {
+        console.log('더 많은 상품 버튼 발견');
+        moreProductsBtn.addEventListener('click', function() {
+            console.log('더 많은 상품 버튼 클릭됨');
+            alert('더 많은 추천 상품을 준비 중입니다. 곧 만나볼 수 있어요!');
+        });
+    }
 });
 
 // 수학 기호 애니메이션 추가 함수
