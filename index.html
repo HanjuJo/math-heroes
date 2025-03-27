@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>즐거운 수학 놀이터</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 타이틀 영역 -->
+        <header class="title">
+            <h1>즐거운 수학 놀이터 - 한국 초등학생을 위한 무료 수학 플랫폼</h1>
+        </header>
+        
+        <!-- 메인 콘텐츠 영역 -->
+        <div class="main-content">
+            <!-- 왼쪽 메뉴 영역 -->
+            <div class="left-menu">
+                <h2>학년별 메뉴</h2>
+                <div id="grade-menu">
+                    <div class="menu-item grade1" data-grade="1">1학년</div>
+                    <div class="menu-item grade2" data-grade="2">2학년</div>
+                    <div class="menu-item grade3" data-grade="3">3학년</div>
+                    <div class="menu-item grade4" data-grade="4">4학년</div>
+                    <div class="menu-item grade5" data-grade="5">5학년</div>
+                    <div class="menu-item grade6" data-grade="6">6학년</div>
+                </div>
+                
+                <h2>단원별 메뉴</h2>
+                <div id="subject-menu">
+                    <div class="menu-item" data-subject="number">수와 연산</div>
+                    <div class="menu-item" data-subject="shape">도형</div>
+                    <div class="menu-item" data-subject="measurement">측정</div>
+                    <div class="menu-item" data-subject="data">자료와 가능성</div>
+                </div>
+            </div>
+            
+            <!-- 게임 영역 -->
+            <div class="game-area">
+                <h2>게임 영역</h2>
+                <div id="game-cards">
+                    <div class="game-card" id="game1">
+                        <div class="game-image">🏃‍♂️</div>
+                        <h3>숫자왕 달리기</h3>
+                        <p>덧셈과 뺄셈을 학습하며<br>장애물을 피해 달려요!</p>
+                        <button class="play-btn" data-game="number-run">게임 시작</button>
+                    </div>
+                    
+                    <div class="game-card" id="game2">
+                        <div class="game-image">⚔️</div>
+                        <h3>수학 용사</h3>
+                        <p>곱셈과 나눗셈으로<br>몬스터를 물리쳐요!</p>
+                        <button class="play-btn" data-game="math-warrior">게임 시작</button>
+                    </div>
+                    
+                    <div class="game-card" id="game3">
+                        <div class="game-image">🧩</div>
+                        <h3>도형 퍼즐</h3>
+                        <p>다양한 도형으로<br>패턴을 완성해요!</p>
+                        <button class="play-btn" data-game="shape-puzzle">게임 시작</button>
+                    </div>
+                    
+                    <div class="game-card" id="game4">
+                        <div class="game-image">🛒</div>
+                        <h3>수학 시장</h3>
+                        <p>물건 가격 계산하고<br>거스름돈도 계산해요!</p>
+                        <button class="play-btn" data-game="math-market">게임 시작</button>
+                    </div>
+                    
+                    <button id="more-games">더 많은 게임 보기</button>
+                </div>
+            </div>
+            
+            <!-- 오른쪽 쿠팡파트너스 영역 -->
+            <div class="right-menu">
+                <h2>추천 학습 도구</h2>
+                <div id="coupang-partners">
+                    <div class="product-card">
+                        <div class="product-image">📚</div>
+                        <h3>초등 수학 문제집</h3>
+                        <p class="price">19,800원</p>
+                        <button class="buy-btn">자세히 보기</button>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="product-image">🧮</div>
+                        <h3>수학 교구 세트</h3>
+                        <p class="price">35,500원</p>
+                        <button class="buy-btn">자세히 보기</button>
+                    </div>
+                    
+                    <button id="more-products">추천 상품 더보기</button>
+                    
+                    <div class="coupang-info">
+                        <p>쿠팡파트너스 연동</p>
+                        <small>이 페이지는 쿠팡파트너스<br>활동의 일환으로 수수료를<br>제공 받을 수 있습니다.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 네비게이션 바 -->
+        <nav class="navbar">
+            <ul>
+                <li><a href="#">홈</a></li>
+                <li><a href="#">게임 목록</a></li>
+                <li><a href="#">학습 가이드</a></li>
+                <li><a href="#">마이페이지</a></li>
+                <li><a href="#">학부모 안내</a></li>
+                <li><a href="#">고객센터</a></li>
+                <li><a href="#">자주묻는질문</a></li>
+            </ul>
+        </nav>
+        
+        <!-- 게임 모달 -->
+        <div id="game-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="modal-title">게임 제목</h2>
+                <div id="game-container">
+                    <!-- 게임 콘텐츠가 여기에 로드됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html> 
