@@ -605,4 +605,84 @@ body {
 .navbar a.active {
     font-weight: bold;
     text-decoration: underline;
+}
+
+/* 게임 상세 정보 스타일 */
+.game-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.game-detail-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.game-info {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.game-description-full {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.game-target {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.game-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.game-coming-soon {
+    background-color: #FFF3CD;
+    color: #856404;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* 오류 메시지 스타일 */
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 90%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 반응형 디자인 */
+@media (min-width: 768px) {
+    .game-detail {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    
+    .game-detail-image {
+        flex: 1;
+        max-width: 50%;
+    }
+    
+    .game-info {
+        flex: 1;
+    }
 } 

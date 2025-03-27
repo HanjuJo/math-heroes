@@ -340,4 +340,124 @@ function updateProgress(problem, isCorrect) {
         // 진도 업데이트
         loadProgressData();
     }
+}
+
+// 서버로부터 게임 목록 가져오기
+function fetchGames() {
+    fetch('/api/games')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('게임 데이터를 불러오는 데 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(games => {
+            displayGames(games);
+        })
+        .catch(error => {
+            console.error('게임 데이터를 가져오는 중 오류 발생:', error);
+            // 오류 시 대체 메시지 표시
+            document.querySelector('.games-grid').innerHTML = `
+                <div class="error-message">
+                    <p>게임 목록을 불러오는 데 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>
+                </div>
+            `;
+        });
+}
+
+// 게임 목록 화면에 표시
+function displayGames(games) {
+    const gamesGrid = document.querySelector('.games-grid');
+    if (!gamesGrid) return;
+    
+    gamesGrid.innerHTML = '';
+    
+    games.forEach(game => {
+        // 난이도에 따른 별 표시
+        const stars = '★'.repeat(game.level) + '☆'.repeat(5 - game.level);
+        
+        // 태그 HTML 생성
+        const tagsHtml = game.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('');
+        
+        // 게임 카드 HTML 생성
+        const gameCard = document.createElement('div');
+        gameCard.className = 'game-card-large';
+        gameCard.setAttribute('data-game-id', game.id);
+        
+        gameCard.innerHTML = `
+            <div class="game-image">
+                <img src="${game.image || 'https://via.placeholder.com/300x200?text=' + encodeURIComponent(game.title)}" alt="${game.title}">
+            </div>
+            <h3 class="game-title">${game.title}</h3>
+            <div class="game-level">난이도: <span class="stars">${stars}</span></div>
+            <p class="game-description">${game.description}</p>
+            <div class="game-details">
+                <div class="game-grades">대상: ${game.grades.join(', ')}학년</div>
+                <div class="game-tags">${tagsHtml}</div>
+            </div>
+            <button class="game-start-btn" data-game-id="${game.id}">게임 시작하기</button>
+        `;
+        
+        gamesGrid.appendChild(gameCard);
+    });
+    
+    // 게임 시작 버튼 이벤트 리스너 추가
+    document.querySelectorAll('.game-start-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const gameId = this.getAttribute('data-game-id');
+            loadGameDetail(gameId);
+        });
+    });
+    
+    // 게임 카드 클릭 이벤트 리스너 추가 (이미지와 제목)
+    document.querySelectorAll('.game-card-large .game-image, .game-card-large .game-title').forEach(element => {
+        element.addEventListener('click', function() {
+            const gameId = this.closest('.game-card-large').getAttribute('data-game-id');
+            loadGameDetail(gameId);
+        });
+    });
+}
+
+// 특정 게임 상세 정보 로드
+function loadGameDetail(gameId) {
+    fetch(`/api/games/${gameId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('게임 상세 정보를 불러오는 데 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(game => {
+            openGameModal(game.title, `game-${game.id}`);
+            
+            // 모달 내용 업데이트
+            document.getElementById('game-container').innerHTML = `
+                <div class="game-detail">
+                    <img src="${game.image || 'https://via.placeholder.com/600x400?text=' + encodeURIComponent(game.title)}" alt="${game.title}" class="game-detail-image">
+                    <div class="game-info">
+                        <p class="game-description-full">${game.description}</p>
+                        <p class="game-target">대상 학년: ${game.grades.join(', ')}학년</p>
+                        <div class="game-tags-container">
+                            ${game.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}
+                        </div>
+                        <p class="game-coming-soon">이 게임은 현재 개발 중입니다. 곧 만나볼 수 있어요!</p>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('게임 상세 정보를 가져오는 중 오류 발생:', error);
+            document.getElementById('game-container').innerHTML = `
+                <div class="error-message">
+                    <p>게임 정보를 불러오는 데 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>
+                </div>
+            `;
+        });
+}
+
+// 게임 페이지에서 자동으로 게임 목록 로드
+if (document.querySelector('.games-grid')) {
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchGames();
+    });
 } 
